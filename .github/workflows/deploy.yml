@@ -1,4 +1,4 @@
-name: Desplegar shell
+name: Deploy shell
 
 on:
   push:
@@ -17,10 +17,13 @@ concurrency:
 
 env:
   NODE_VERSION: "24"
+  GCP_PROJECT_ID: alejoavila-web
+  WIF_PROVIDER: projects/1027646897233/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+  DEPLOYER_SERVICE_ACCOUNT: github-deployer@alejoavila-web.iam.gserviceaccount.com
 
 jobs:
-  verificar:
-    name: Verificar
+  verify:
+    name: Verify
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -30,29 +33,29 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
-      - name: Instalar dependencias
+      - name: Install dependencies
         run: npm ci
 
-      - name: Auditar dependencias
+      - name: Audit dependencies
         run: npm audit --audit-level=high
 
       - name: Lint
         run: npm run lint
 
-      - name: Construir
+      - name: Build
         run: npm run build
 
-      - name: Verificar que no se filtraron secretos al bundle
+      - name: Check for leaked secrets in the bundle
         run: |
           if grep -rlE 'AIza[0-9A-Za-z_-]{35}|-----BEGIN [A-Z ]*PRIVATE KEY-----' out/ 2>/dev/null; then
-            echo "::error::Se encontro material sensible en el bundle publicado"
+            echo "::error::Sensitive material found in the published bundle"
             exit 1
           fi
-          echo "Sin secretos detectados en out/"
+          echo "No secrets detected in out/"
 
-  desplegar:
-    name: Desplegar a Firebase Hosting
-    needs: verificar
+  deploy:
+    name: Deploy to Firebase Hosting
+    needs: verify
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     environment: production
@@ -67,12 +70,12 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      - name: Autenticar contra GCP
+      - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
         with:
-          project_id: alejoavila-web
-          workload_identity_provider: projects/1027646897233/locations/global/workloadIdentityPools/github-pool/providers/github-provider
-          service_account: github-deployer@alejoavila-web.iam.gserviceaccount.com
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.DEPLOYER_SERVICE_ACCOUNT }}
 
-      - name: Publicar
-        run: npx --yes firebase-tools@latest deploy --only hosting --project alejoavila-web --non-interactive
+      - name: Publish
+        run: npx --yes firebase-tools@latest deploy --only hosting --project ${{ env.GCP_PROJECT_ID }} --non-interactive
