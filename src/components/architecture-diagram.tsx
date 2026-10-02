@@ -115,20 +115,26 @@ export function ArchitectureDiagram({
           <circle key={i} cx={port.x} cy={port.y} r="2" fill="var(--trace)" />
         ))}
 
-        {TRACES.filter((t) => isActive(t.layer)).map((trace) =>
-          [0, 1].map((n) => (
+        {TRACES.map((trace, i) => {
+          const on = isActive(trace.layer);
+          const idle = activeLayer === null;
+          if (!on && !idle) return null;
+          return [0, 1].map((n) => (
             <circle
               key={`${trace.id}-packet-${n}`}
-              r="2.6"
+              r={on ? 2.6 : 1.8}
               fill="var(--accent)"
+              opacity={on ? 1 : 0.4}
               className="packet"
               style={{
                 offsetPath: `path("${trace.d}")`,
-                animation: `packet 1.6s linear ${n * 0.8}s infinite`,
+                animation: `packet ${on ? 1.6 : 4.2}s linear ${
+                  n * (on ? 0.8 : 2.1) + (on ? 0 : i * 0.5)
+                }s infinite`,
               }}
             />
-          )),
-        )}
+          ));
+        })}
 
         {NODES.map((node) => {
           const on = isActive(node.layer);

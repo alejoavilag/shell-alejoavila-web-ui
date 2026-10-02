@@ -1,4 +1,3 @@
-import { CodeRain } from "@/components/code-rain";
 import { LayeredStory, type Section } from "@/components/layered-story";
 
 const SECTIONS: Section[] = [
@@ -63,11 +62,9 @@ const SECTIONS: Section[] = [
 ];
 
 export default function Home() {
-  return (
-    <main>
-      <header className="relative overflow-hidden">
-        <CodeRain />
-        <div className="relative mx-auto flex min-h-[88vh] max-w-6xl flex-col justify-center px-4 py-20">
+  const hero = (
+    <header className="relative">
+      <div className="relative flex min-h-[78vh] flex-col justify-center py-20">
           <p className="inline-flex w-fit items-center gap-2 rounded-full border border-border-strong px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
             <span className="pulse-ring size-1.5 rounded-full bg-accent shadow-[0_0_8px_var(--glow)]" />
             Bogotá · Abierto a trabajo remoto
@@ -107,11 +104,14 @@ export default function Home() {
             >
               GitHub
             </a>
-          </div>
         </div>
-      </header>
+      </div>
+    </header>
+  );
 
-      <LayeredStory sections={SECTIONS} />
+  return (
+    <main>
+      <LayeredStory sections={SECTIONS} hero={hero} />
 
       <footer className="mx-auto max-w-6xl border-t border-border px-4 py-12">
         <p className="font-mono text-xs text-text-muted">

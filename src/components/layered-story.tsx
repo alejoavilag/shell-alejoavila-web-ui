@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArchitectureDiagram, type LayerId } from "./architecture-diagram";
 
 export type Section = {
@@ -11,7 +11,13 @@ export type Section = {
   points: string[];
 };
 
-export function LayeredStory({ sections }: { sections: Section[] }) {
+export function LayeredStory({
+  sections,
+  hero,
+}: {
+  sections: Section[];
+  hero: ReactNode;
+}) {
   const [active, setActive] = useState<LayerId | null>(null);
   const container = useRef<HTMLDivElement>(null);
 
@@ -22,9 +28,9 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.find((entry) => entry.isIntersecting);
-        if (visible) {
-          setActive(visible.target.getAttribute("data-layer") as LayerId);
-        }
+        setActive(
+          visible ? (visible.target.getAttribute("data-layer") as LayerId) : null,
+        );
       },
       { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
     );
@@ -36,15 +42,16 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
   return (
     <div
       ref={container}
-      className="mx-auto grid max-w-6xl gap-12 px-4 lg:grid-cols-[1fr_minmax(0,22rem)] lg:gap-16"
+      className="mx-auto grid max-w-6xl gap-10 px-4 lg:grid-cols-[1fr_minmax(0,21rem)] lg:gap-14"
     >
       <div className="order-2 lg:order-1">
+        {hero}
         {sections.map((section) => (
           <section
             key={section.id}
             data-layer={section.id}
             aria-labelledby={`${section.id}-title`}
-            className="min-h-[70vh] border-t border-border py-16 first:border-t-0"
+            className="min-h-[70vh] border-t border-border py-16"
           >
             <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
               <span aria-hidden className="h-px w-8 bg-accent" />
@@ -72,7 +79,7 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
       </div>
 
       <div className="order-1 lg:order-2">
-        <div className="panel sticky top-8 rounded-2xl p-5 shadow-[0_0_60px_rgba(34,211,238,0.06)]">
+        <div className="panel sticky top-6 rounded-2xl p-5 shadow-[0_0_70px_rgba(34,211,238,0.07)] lg:mt-24">
           <ArchitectureDiagram activeLayer={active} />
           <p
             aria-live="polite"
