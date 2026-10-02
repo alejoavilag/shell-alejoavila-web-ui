@@ -7,8 +7,6 @@ on:
     branches: [master]
   workflow_dispatch:
 
-# Permiso minimo. id-token es lo que habilita OIDC hacia GCP: sin el no hay
-# federacion, y con el no hace falta ninguna llave de servicio.
 permissions:
   contents: read
   id-token: write
@@ -69,8 +67,6 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      # Federacion de identidad: GitHub presenta un token OIDC de corta vida y
-      # GCP lo canjea. No existe ningun JSON de credenciales en este repositorio.
       - name: Autenticar contra GCP
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
         with:
@@ -78,7 +74,5 @@ jobs:
           workload_identity_provider: projects/1027646897233/locations/global/workloadIdentityPools/github-pool/providers/github-provider
           service_account: github-deployer@alejoavila-web.iam.gserviceaccount.com
 
-      # Se usa el CLI oficial en vez de una accion de terceros para reducir la
-      # superficie de cadena de suministro.
       - name: Publicar
         run: npx --yes firebase-tools@latest deploy --only hosting --project alejoavila-web --non-interactive
