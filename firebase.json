@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "alejoavila",
     "public": "out",
     "trailingSlash": true,
     "cleanUrls": false,
