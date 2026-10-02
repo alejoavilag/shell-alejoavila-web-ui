@@ -1,47 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f7f8fa;
-  --surface: #ffffff;
-  --surface-raised: #eef1f5;
-  --border: #d4dae3;
-  --grid: #c3ccd9;
-  --text: #0d1420;
-  --text-muted: #5a6879;
-  --accent: #b86a00;
-  --accent-soft: #f2d9b3;
-  --trace: #9aa9bb;
-  --trace-active: #b86a00;
-}
+  color-scheme: dark;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #070b12;
-    --surface: #0d1420;
-    --surface-raised: #141d2d;
-    --border: #1d2a3d;
-    --grid: #142133;
-    --text: #e6edf5;
-    --text-muted: #8b9aae;
-    --accent: #f5a524;
-    --accent-soft: #3d2c0f;
-    --trace: #1f3a52;
-    --trace-active: #f5a524;
-  }
+  --bg: #04060c;
+  --bg-deep: #02040a;
+  --surface: #0a1020;
+  --surface-glass: rgba(14, 22, 42, 0.72);
+  --border: rgba(110, 170, 235, 0.14);
+  --border-strong: rgba(110, 170, 235, 0.3);
+  --grid: rgba(90, 150, 220, 0.055);
+  --text: #e9f0fa;
+  --text-muted: #7f90aa;
+  --accent: #22d3ee;
+  --accent-dim: #0e7490;
+  --accent-2: #a78bfa;
+  --glow: rgba(34, 211, 238, 0.45);
+  --trace: rgba(110, 170, 235, 0.22);
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
-  --color-surface-raised: var(--surface-raised);
   --color-border: var(--border);
-  --color-grid: var(--grid);
+  --color-border-strong: var(--border-strong);
   --color-text: var(--text);
   --color-text-muted: var(--text-muted);
   --color-accent: var(--accent);
-  --color-accent-soft: var(--accent-soft);
-  --color-trace: var(--trace);
-  --color-trace-active: var(--trace-active);
+  --color-accent-2: var(--accent-2);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -49,37 +35,103 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--bg-deep);
 }
 
 body {
+  position: relative;
   background-color: var(--bg);
   color: var(--text);
   font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
   background-image:
     linear-gradient(to right, var(--grid) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
-  background-size: 48px 48px;
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 20%, transparent 75%);
 }
 
-@keyframes trace-flow {
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 0%, rgba(34, 211, 238, 0.09), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 15%, rgba(167, 139, 250, 0.07), transparent 65%);
+}
+
+.glow-text {
+  text-shadow: 0 0 28px var(--glow);
+}
+
+.panel {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+@keyframes packet {
+  from {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
   to {
-    stroke-dashoffset: -14;
+    offset-distance: 100%;
+    opacity: 0;
   }
 }
 
-.trace-flow {
-  animation: trace-flow 1.2s linear infinite;
+@keyframes rain {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0%);
+  }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .trace-flow {
-    animation: none;
+@keyframes pulse-ring {
+  0%,
+  100% {
+    opacity: 0.35;
   }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.rain-column {
+  animation: rain linear infinite;
+}
+
+.pulse-ring {
+  animation: pulse-ring 2.4s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .rain-column,
+  .pulse-ring,
+  [class*="packet"] {
+    animation: none !important;
   }
 
   *,
@@ -93,7 +145,7 @@ body {
 
 ::selection {
   background-color: var(--accent);
-  color: var(--bg);
+  color: var(--bg-deep);
 }
 
 :focus-visible {

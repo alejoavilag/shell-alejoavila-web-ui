@@ -46,7 +46,8 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
             aria-labelledby={`${section.id}-title`}
             className="min-h-[70vh] border-t border-border py-16 first:border-t-0"
           >
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">
+            <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+              <span aria-hidden className="h-px w-8 bg-accent" />
               {section.eyebrow}
             </p>
             <h2
@@ -71,11 +72,11 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
       </div>
 
       <div className="order-1 lg:order-2">
-        <div className="sticky top-8 rounded-xl border border-border bg-surface p-5">
+        <div className="panel sticky top-8 rounded-2xl p-5 shadow-[0_0_60px_rgba(34,211,238,0.06)]">
           <ArchitectureDiagram activeLayer={active} />
           <p
             aria-live="polite"
-            className="mt-4 text-center font-mono text-xs uppercase tracking-[0.18em] text-text-muted"
+            className="mt-4 text-center font-mono text-[11px] uppercase tracking-[0.22em] text-accent"
           >
             {active ? sections.find((s) => s.id === active)?.eyebrow : "Arquitectura del sitio"}
           </p>

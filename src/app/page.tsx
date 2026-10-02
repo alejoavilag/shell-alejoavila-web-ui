@@ -1,3 +1,4 @@
+import { CodeRain } from "@/components/code-rain";
 import { LayeredStory, type Section } from "@/components/layered-story";
 
 const SECTIONS: Section[] = [
@@ -64,45 +65,49 @@ const SECTIONS: Section[] = [
 export default function Home() {
   return (
     <main>
-      <header className="mx-auto flex min-h-[85vh] max-w-6xl flex-col justify-center px-4 py-20">
-        <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent">
-          Bogotá, Colombia · Abierto a trabajo remoto
-        </p>
-        <h1 className="mt-6 text-5xl font-semibold tracking-tight sm:text-7xl">
-          Alejandro Ávila
-        </h1>
-        <p className="mt-4 text-xl text-text-muted sm:text-2xl">
-          Senior Full-Stack Engineer · Platform &amp; Cloud
-        </p>
-        <p className="mt-8 max-w-2xl text-lg leading-relaxed text-text-muted">
-          Construyo plataformas de banca digital de punta a punta: microfrontends,
-          microservicios e infraestructura como código.
-        </p>
-        <ul className="mt-10 flex flex-wrap gap-2">
-          {["TypeScript", "NestJS", "Angular", "React", "Terraform", "AWS", "GCP"].map(
-            (tech) => (
-              <li
-                key={tech}
-                className="rounded-full border border-border px-3 py-1 font-mono text-xs text-text-muted"
-              >
-                {tech}
-              </li>
-            ),
-          )}
-        </ul>
-        <div className="mt-12 flex flex-wrap gap-4">
-          <a
-            href="#edge-title"
-            className="rounded-lg bg-accent px-5 py-3 font-medium text-bg transition-opacity hover:opacity-90"
-          >
-            Recorrer la arquitectura
-          </a>
-          <a
-            href="https://github.com/alejoavilag"
-            className="rounded-lg border border-border px-5 py-3 font-medium transition-colors hover:border-accent hover:text-accent"
-          >
-            GitHub
-          </a>
+      <header className="relative overflow-hidden">
+        <CodeRain />
+        <div className="relative mx-auto flex min-h-[88vh] max-w-6xl flex-col justify-center px-4 py-20">
+          <p className="inline-flex w-fit items-center gap-2 rounded-full border border-border-strong px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+            <span className="pulse-ring size-1.5 rounded-full bg-accent shadow-[0_0_8px_var(--glow)]" />
+            Bogotá · Abierto a trabajo remoto
+          </p>
+          <h1 className="glow-text mt-7 text-5xl font-semibold tracking-tight sm:text-7xl">
+            Alejandro Ávila
+          </h1>
+          <p className="mt-4 font-mono text-lg tracking-tight text-accent sm:text-xl">
+            Senior Full-Stack Engineer · Platform &amp; Cloud
+          </p>
+          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-text-muted">
+            Construyo plataformas de banca digital de punta a punta: microfrontends,
+            microservicios e infraestructura como código.
+          </p>
+          <ul className="mt-10 flex flex-wrap gap-2">
+            {["TypeScript", "NestJS", "Angular", "React", "Terraform", "AWS", "GCP"].map(
+              (tech) => (
+                <li
+                  key={tech}
+                  className="rounded-md border border-border bg-surface/60 px-3 py-1 font-mono text-xs text-text-muted"
+                >
+                  {tech}
+                </li>
+              ),
+            )}
+          </ul>
+          <div className="mt-12 flex flex-wrap gap-4">
+            <a
+              href="#edge-title"
+              className="rounded-lg bg-accent px-5 py-3 font-medium text-[#04060c] shadow-[0_0_28px_var(--glow)] transition-shadow hover:shadow-[0_0_44px_var(--glow)]"
+            >
+              Recorrer la arquitectura
+            </a>
+            <a
+              href="https://github.com/alejoavilag"
+              className="rounded-lg border border-border-strong px-5 py-3 font-medium transition-colors hover:border-accent hover:text-accent"
+            >
+              GitHub
+            </a>
+          </div>
         </div>
       </header>
 
