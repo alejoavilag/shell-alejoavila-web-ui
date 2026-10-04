@@ -89,22 +89,32 @@ body {
     html {
       scroll-snap-type: y mandatory;
     }
+
+    .snap-start,
+    .snap-end {
+      scroll-snap-stop: always;
+    }
   }
 }
 
 @keyframes panel-pass {
   0% {
     opacity: 0;
-    transform: translateY(72px) scale(0.96);
+    transform: translateY(40px) scale(0.988);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
-  28%,
-  72% {
+  26% {
     opacity: 1;
     transform: none;
   }
+  74% {
+    opacity: 1;
+    transform: none;
+    animation-timing-function: cubic-bezier(0.64, 0, 0.78, 0);
+  }
   100% {
     opacity: 0;
-    transform: translateY(-72px) scale(0.96);
+    transform: translateY(-40px) scale(0.988);
   }
 }
 
@@ -118,7 +128,10 @@ body {
 }
 
 @keyframes hero-dissolve {
-  to {
+  0% {
+    animation-timing-function: cubic-bezier(0.64, 0, 0.78, 0);
+  }
+  100% {
     opacity: 0;
     transform: translateY(-48px);
     filter: blur(5px);

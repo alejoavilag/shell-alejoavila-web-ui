@@ -22,14 +22,27 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
     const nodes = container.current?.querySelectorAll<HTMLElement>("[data-layer]");
     if (!nodes?.length) return;
 
+    const visible = new Set<Element>();
+    const distanceToCenter = (node: Element) => {
+      const rect = node.getBoundingClientRect();
+      return Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2);
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.find((entry) => entry.isIntersecting);
-        setActive(
-          visible ? (visible.target.getAttribute("data-layer") as LayerId) : null,
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target);
+          else visible.delete(entry.target);
+        }
+
+        if (!visible.size) return;
+
+        const nearest = [...visible].reduce((best, node) =>
+          distanceToCenter(node) < distanceToCenter(best) ? node : best,
         );
+        setActive(nearest.getAttribute("data-layer") as LayerId);
       },
-      { rootMargin: "-40% 0px -40% 0px", threshold: 0 },
+      { rootMargin: "-35% 0px -35% 0px", threshold: 0 },
     );
 
     nodes.forEach((node) => observer.observe(node));
