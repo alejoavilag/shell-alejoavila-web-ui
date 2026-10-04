@@ -78,9 +78,9 @@ export default function Home() {
 
       <div className="zone-light relative">
         <header className="mx-auto max-w-6xl px-4 lg:pl-20">
-          <div className="flex min-h-[86vh] flex-col justify-center py-20">
+          <div className="hero-dissolve relative flex h-dvh flex-col justify-center">
             <p
-              data-spine-node
+              data-spine-point
               className="inline-flex w-fit items-center gap-2 rounded-full border border-border-strong px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-accent"
             >
               <span className="pulse-ring size-1.5 rounded-full bg-accent" />
@@ -108,10 +108,10 @@ export default function Home() {
             </ul>
             <div className="mt-12 flex flex-wrap gap-4">
               <a
-                href="#stack"
+                href="#perfil"
                 className="rounded-lg bg-accent px-5 py-3 font-medium text-accent-contrast shadow-[0_8px_30px_var(--glow)] transition-shadow hover:shadow-[0_12px_44px_var(--glow)]"
               >
-                Recorrer la arquitectura
+                Empezar el recorrido
               </a>
               <a
                 href="https://github.com/alejoavilag"
@@ -120,17 +120,21 @@ export default function Home() {
                 GitHub
               </a>
             </div>
+
+            <p className="absolute inset-x-0 bottom-10 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] text-text-muted">
+              <span aria-hidden className="h-px w-10 bg-border-strong" />
+              Scroll
+            </p>
           </div>
         </header>
 
         <section
+          id="perfil"
+          data-spine-point
           aria-labelledby="perfil-title"
-          className="mx-auto max-w-6xl border-t border-border px-4 py-24 lg:pl-20"
+          className="mx-auto max-w-6xl scroll-mt-16 border-t border-border px-4 py-28 lg:pl-20"
         >
-          <p
-            data-spine-node
-            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent"
-          >
+          <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
             <span aria-hidden className="h-px w-8 bg-accent" />
             Perfil
           </p>

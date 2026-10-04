@@ -53,6 +53,8 @@ export function CursorField() {
 
       root.style.setProperty("--cursor-x", `${eased.x}px`);
       root.style.setProperty("--cursor-y", `${eased.y}px`);
+      root.style.setProperty("--cursor-doc-x", `${eased.x + window.scrollX}px`);
+      root.style.setProperty("--cursor-doc-y", `${eased.y + window.scrollY}px`);
 
       frame = requestAnimationFrame(tick);
     };
@@ -66,6 +68,8 @@ export function CursorField() {
       root.classList.remove("cursor-hidden");
       root.style.removeProperty("--cursor-x");
       root.style.removeProperty("--cursor-y");
+      root.style.removeProperty("--cursor-doc-x");
+      root.style.removeProperty("--cursor-doc-y");
     };
   }, [enabled]);
 
@@ -75,22 +79,21 @@ export function CursorField() {
     <div aria-hidden className="cursor-tint pointer-events-none fixed inset-0 z-50">
       <div
         ref={ring}
-        className="cursor-ring absolute top-0 left-0 rounded-full border"
+        className="cursor-ring absolute top-0 left-0 rounded-full border-2"
         style={{
-          width: hovering ? 46 : 28,
-          height: hovering ? 46 : 28,
+          width: hovering ? 54 : 34,
+          height: hovering ? 54 : 34,
           borderColor: "var(--tint)",
-          backgroundColor: hovering
-            ? "color-mix(in srgb, var(--tint) 14%, transparent)"
-            : "transparent",
+          backgroundColor: `color-mix(in srgb, var(--tint) ${hovering ? 22 : 10}%, transparent)`,
+          boxShadow: "0 0 22px color-mix(in srgb, var(--tint) 35%, transparent)",
         }}
       />
       <div
         ref={dot}
-        className="absolute top-0 left-0 size-1.5 rounded-full"
+        className="absolute top-0 left-0 size-2.5 rounded-full"
         style={{
           backgroundColor: "var(--tint)",
-          boxShadow: "0 0 14px var(--tint)",
+          boxShadow: "0 0 16px var(--tint)",
         }}
       />
     </div>

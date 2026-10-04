@@ -38,18 +38,16 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
       ref={container}
       className="mx-auto grid max-w-6xl gap-10 px-4 lg:grid-cols-[1fr_minmax(0,21rem)] lg:gap-14 lg:pl-20"
     >
-      <div className="order-2 lg:order-1">
+      <div className="order-2 space-y-24 py-24 lg:order-1">
         {sections.map((section) => (
           <section
             key={section.id}
             data-layer={section.id}
+            data-spine-box
             aria-labelledby={`${section.id}-title`}
-            className="min-h-[70vh] border-t border-border py-16 first:border-t-0"
+            className="panel rounded-2xl p-8 shadow-[0_0_60px_rgba(34,211,238,0.05)] sm:p-10"
           >
-            <p
-              data-spine-node
-              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent"
-            >
+            <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
               <span aria-hidden className="h-px w-8 bg-accent" />
               {section.eyebrow}
             </p>

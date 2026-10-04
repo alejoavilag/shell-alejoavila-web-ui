@@ -1,53 +1,115 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-const WIDTH = 56;
-const CENTER = WIDTH / 2;
-const AMPLITUDE = 15;
+const LANE_GAP = 46;
+const BOX_INSET = 18;
+const APPROACH = 70;
+const EDGE_PADDING = 26;
+const MIN_WIDTH = 5;
+const MAX_WIDTH = 30;
+const SAMPLES = 220;
 
-type Point = { x: number; y: number; node: boolean };
+type Stop = { box: boolean; top: number; bottom: number; left: number };
+type Vec = { x: number; y: number };
+type Geometry = { width: number; height: number; d: string };
 
-function buildPath(points: Point[]) {
+function smooth(points: Vec[]) {
   return points.reduce((d, point, i) => {
     if (i === 0) return `M ${point.x} ${point.y}`;
     const previous = points[i - 1];
-    const handle = (point.y - previous.y) / 2;
+    const handle = (point.y - previous.y) / 2.3;
     return `${d} C ${previous.x} ${previous.y + handle}, ${point.x} ${point.y - handle}, ${point.x} ${point.y}`;
   }, "");
 }
 
+function centerline(stops: Stop[], lane: number, height: number) {
+  const points: Vec[] = [{ x: lane, y: 0 }];
+
+  const push = (x: number, y: number) => {
+    const last = points[points.length - 1];
+    points.push({ x, y: Math.max(y, last.y + 1) });
+  };
+
+  for (const stop of stops) {
+    if (!stop.box) {
+      push(lane + 18, stop.top);
+      continue;
+    }
+    push(lane, stop.top - APPROACH);
+    push(stop.left - BOX_INSET, stop.top + EDGE_PADDING);
+    push(stop.left - BOX_INSET, stop.bottom - EDGE_PADDING);
+    push(lane, stop.bottom + APPROACH);
+  }
+
+  push(lane, height);
+  return points;
+}
+
+function ribbon(samples: Vec[]) {
+  if (samples.length < 2) return "";
+  const last = samples.length - 1;
+  const left: Vec[] = [];
+  const right: Vec[] = [];
+
+  samples.forEach((point, i) => {
+    const before = samples[Math.max(0, i - 1)];
+    const after = samples[Math.min(last, i + 1)];
+    const length = Math.hypot(after.x - before.x, after.y - before.y) || 1;
+    const nx = -(after.y - before.y) / length;
+    const ny = (after.x - before.x) / length;
+    const half = (MIN_WIDTH + (MAX_WIDTH - MIN_WIDTH) * Math.pow(i / last, 0.8)) / 2;
+    left.push({ x: point.x + nx * half, y: point.y + ny * half });
+    right.push({ x: point.x - nx * half, y: point.y - ny * half });
+  });
+
+  return [...left, ...right.reverse()]
+    .map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`)
+    .join(" ");
+}
+
 export function ScrollSpine() {
   const host = useRef<HTMLDivElement>(null);
-  const track = useRef<SVGPathElement>(null);
-  const [points, setPoints] = useState<Point[]>([]);
-  const [height, setHeight] = useState(0);
-  const [length, setLength] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const centerPath = useRef<SVGPathElement>(null);
+  const clip = useRef<SVGRectElement>(null);
+  const head = useRef<SVGGElement>(null);
+  const trail = useRef<Vec[]>([]);
+
+  const [geometry, setGeometry] = useState<Geometry>({ width: 0, height: 0, d: "" });
+  const [samples, setSamples] = useState<Vec[]>([]);
 
   useEffect(() => {
     const element = host.current;
     if (!element) return;
 
     const measure = () => {
-      const base = element.getBoundingClientRect().top + window.scrollY;
-      const total = element.offsetHeight;
+      const frame = element.getBoundingClientRect();
+      if (frame.width === 0) return;
+
       const marks = Array.from(
-        document.querySelectorAll<HTMLElement>("[data-spine-node]"),
-      ).map((mark) => mark.getBoundingClientRect().top + window.scrollY - base);
+        document.querySelectorAll<HTMLElement>("[data-spine-point], [data-spine-box]"),
+      ).map((mark) => {
+        const rect = mark.getBoundingClientRect();
+        return {
+          box: mark.hasAttribute("data-spine-box"),
+          top: rect.top - frame.top,
+          bottom: rect.bottom - frame.top,
+          left: rect.left - frame.left,
+        };
+      });
 
-      const next: Point[] = [
-        { x: CENTER, y: 0, node: false },
-        ...marks.map((y, i) => ({
-          x: CENTER + (i % 2 === 0 ? AMPLITUDE : -AMPLITUDE),
-          y,
-          node: true,
-        })),
-        { x: CENTER, y: total, node: false },
-      ];
+      const anchors = marks.filter((mark) => mark.box);
+      const columnLeft = (anchors.length ? anchors : marks).reduce(
+        (min, mark) => Math.min(min, mark.left),
+        Number.POSITIVE_INFINITY,
+      );
+      const lane = Math.max(14, columnLeft - LANE_GAP);
 
-      setHeight(total);
-      setPoints(next);
+      setGeometry({
+        width: frame.width,
+        height: element.offsetHeight,
+        d: smooth(centerline(marks, lane, element.offsetHeight)),
+      });
     };
 
     measure();
@@ -57,27 +119,52 @@ export function ScrollSpine() {
   }, []);
 
   useEffect(() => {
-    if (track.current) setLength(track.current.getTotalLength());
-  }, [points]);
+    const path = centerPath.current;
+    if (!path || !geometry.d) return;
+
+    const total = path.getTotalLength();
+    const next = Array.from({ length: SAMPLES + 1 }, (_, i) => {
+      const point = path.getPointAtLength((total * i) / SAMPLES);
+      return { x: point.x, y: point.y };
+    });
+
+    trail.current = next;
+    setSamples(next);
+  }, [geometry.d]);
 
   useEffect(() => {
     const element = host.current;
     if (!element) return;
     let frame = 0;
 
-    const read = () => {
+    const draw = () => {
       frame = 0;
       const rect = element.getBoundingClientRect();
       if (rect.height === 0) return;
-      const probe = window.innerHeight * 0.55;
-      setProgress(Math.min(1, Math.max(0, (probe - rect.top) / rect.height)));
+
+      const probe = window.innerHeight * 0.6;
+      const progress = Math.min(1, Math.max(0, (probe - rect.top) / rect.height));
+      const reached = progress * rect.height;
+
+      clip.current?.setAttribute("height", String(reached));
+
+      const points = trail.current;
+      if (points.length && head.current) {
+        const index = Math.min(
+          points.length - 1,
+          Math.max(0, Math.round(progress * (points.length - 1))),
+        );
+        const point = points[index];
+        head.current.setAttribute("transform", `translate(${point.x} ${point.y})`);
+        head.current.setAttribute("opacity", progress > 0.004 && progress < 0.999 ? "1" : "0");
+      }
     };
 
     const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(read);
+      if (!frame) frame = requestAnimationFrame(draw);
     };
 
-    read();
+    draw();
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     return () => {
@@ -85,83 +172,56 @@ export function ScrollSpine() {
       window.removeEventListener("resize", schedule);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [samples]);
 
-  const d = points.length > 1 ? buildPath(points) : "";
-  const reached = progress * height;
+  const shape = useMemo(() => ribbon(samples), [samples]);
 
   return (
     <div
       ref={host}
       aria-hidden
-      className="pointer-events-none absolute inset-y-0 hidden w-14 lg:block lg:left-[calc(max(0px,50%-36rem)+0.75rem)]"
+      className="pointer-events-none absolute inset-0 z-10 hidden lg:block"
     >
-      {d && (
+      {geometry.d && (
         <svg
-          width={WIDTH}
-          height={height}
-          viewBox={`0 0 ${WIDTH} ${height}`}
+          width={geometry.width}
+          height={geometry.height}
+          viewBox={`0 0 ${geometry.width} ${geometry.height}`}
           className="overflow-visible"
         >
           <defs>
             <linearGradient
-              id="spine-gradient"
+              id="ribbon-fill"
               gradientUnits="userSpaceOnUse"
               x1="0"
               y1="0"
               x2="0"
-              y2={height}
+              y2={geometry.height}
             >
               <stop offset="0%" stopColor="var(--spine-start)" />
-              <stop offset="40%" stopColor="var(--spine-start)" />
+              <stop offset="38%" stopColor="var(--spine-start)" />
+              <stop offset="72%" stopColor="var(--spine-mid)" />
               <stop offset="100%" stopColor="var(--spine-end)" />
             </linearGradient>
+            <clipPath id="ribbon-clip">
+              <rect ref={clip} x="0" y="0" width={geometry.width} height="0" />
+            </clipPath>
           </defs>
 
-          <path
-            ref={track}
-            d={d}
-            fill="none"
-            stroke="var(--spine-track)"
-            strokeWidth="2"
-          />
+          <path ref={centerPath} d={geometry.d} fill="none" stroke="none" />
 
-          <path
-            d={d}
-            fill="none"
-            stroke="url(#spine-gradient)"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeDasharray={length}
-            strokeDashoffset={length * (1 - progress)}
-          />
-
-          {points
-            .filter((point) => point.node)
-            .map((point) => {
-              const on = point.y <= reached;
-              return (
-                <g key={point.y}>
-                  <circle
-                    cx={point.x}
-                    cy={point.y}
-                    r={on ? 11 : 7}
-                    fill="none"
-                    stroke={on ? "url(#spine-gradient)" : "var(--spine-track)"}
-                    strokeWidth="2"
-                    className="transition-all duration-500"
-                  />
-                  <circle
-                    cx={point.x}
-                    cy={point.y}
-                    r="3"
-                    fill="url(#spine-gradient)"
-                    opacity={on ? 1 : 0}
-                    className="transition-opacity duration-500"
-                  />
-                </g>
-              );
-            })}
+          {shape && (
+            <>
+              <polygon points={shape} fill="var(--spine-track)" opacity="0.16" />
+              <g className="ribbon-glow">
+                <polygon points={shape} fill="url(#ribbon-fill)" clipPath="url(#ribbon-clip)" />
+              </g>
+              <g ref={head} opacity="0">
+                <circle r="16" fill="var(--spine-end)" opacity="0.14" />
+                <circle r="5" fill="var(--spine-end)" />
+              </g>
+            </>
+          )}
         </svg>
       )}
     </div>
