@@ -2,17 +2,23 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-const LANE_GAP = 46;
-const BOX_INSET = 18;
 const APPROACH = 70;
 const EDGE_PADDING = 26;
-const MIN_WIDTH = 5;
-const MAX_WIDTH = 30;
 const SAMPLES = 220;
+const FLOW_PERIOD = 220;
+
+const WIDE = { laneGap: 46, boxInset: 18, minWidth: 5, maxWidth: 30 };
+const NARROW = { laneGap: 0, boxInset: 0, minWidth: 3, maxWidth: 11 };
 
 type Stop = { top: number; bottom: number; left: number };
 type Vec = { x: number; y: number };
-type Geometry = { width: number; height: number; d: string };
+type Geometry = {
+  width: number;
+  height: number;
+  d: string;
+  minWidth: number;
+  maxWidth: number;
+};
 
 function smooth(points: Vec[]) {
   return points.reduce((d, point, i) => {
@@ -23,7 +29,7 @@ function smooth(points: Vec[]) {
   }, "");
 }
 
-function centerline(stops: Stop[], lane: number, height: number) {
+function centerline(stops: Stop[], lane: number, edge: number, height: number) {
   const points: Vec[] = [{ x: lane, y: 0 }];
 
   const push = (x: number, y: number) => {
@@ -33,8 +39,8 @@ function centerline(stops: Stop[], lane: number, height: number) {
 
   for (const stop of stops) {
     push(lane, stop.top - APPROACH);
-    push(stop.left - BOX_INSET, stop.top + EDGE_PADDING);
-    push(stop.left - BOX_INSET, stop.bottom - EDGE_PADDING);
+    push(edge, stop.top + EDGE_PADDING);
+    push(edge, stop.bottom - EDGE_PADDING);
     push(lane, stop.bottom + APPROACH);
   }
 
@@ -42,7 +48,7 @@ function centerline(stops: Stop[], lane: number, height: number) {
   return points;
 }
 
-function ribbon(samples: Vec[]) {
+function ribbon(samples: Vec[], minWidth: number, maxWidth: number) {
   if (samples.length < 2) return "";
   const last = samples.length - 1;
   const left: Vec[] = [];
@@ -54,7 +60,7 @@ function ribbon(samples: Vec[]) {
     const length = Math.hypot(after.x - before.x, after.y - before.y) || 1;
     const nx = -(after.y - before.y) / length;
     const ny = (after.x - before.x) / length;
-    const half = (MIN_WIDTH + (MAX_WIDTH - MIN_WIDTH) * Math.pow(i / last, 0.8)) / 2;
+    const half = (minWidth + (maxWidth - minWidth) * Math.pow(i / last, 0.8)) / 2;
     left.push({ x: point.x + nx * half, y: point.y + ny * half });
     right.push({ x: point.x - nx * half, y: point.y - ny * half });
   });
@@ -71,7 +77,13 @@ export function ScrollSpine() {
   const head = useRef<SVGGElement>(null);
   const trail = useRef<Vec[]>([]);
 
-  const [geometry, setGeometry] = useState<Geometry>({ width: 0, height: 0, d: "" });
+  const [geometry, setGeometry] = useState<Geometry>({
+    width: 0,
+    height: 0,
+    d: "",
+    minWidth: WIDE.minWidth,
+    maxWidth: WIDE.maxWidth,
+  });
   const [samples, setSamples] = useState<Vec[]>([]);
 
   useEffect(() => {
@@ -99,12 +111,20 @@ export function ScrollSpine() {
         (min, mark) => Math.min(min, mark.left),
         Number.POSITIVE_INFINITY,
       );
-      const lane = Math.max(14, columnLeft - LANE_GAP);
+
+      const tight = columnLeft < 90;
+      const scale = tight ? NARROW : WIDE;
+      const lane = tight
+        ? Math.max(5, columnLeft / 2 - 3)
+        : Math.max(14, columnLeft - scale.laneGap);
+      const edge = tight ? lane + 7 : columnLeft - scale.boxInset;
 
       setGeometry({
         width: frame.width,
         height: element.offsetHeight,
-        d: smooth(centerline(marks, lane, element.offsetHeight)),
+        d: smooth(centerline(marks, lane, edge, element.offsetHeight)),
+        minWidth: scale.minWidth,
+        maxWidth: scale.maxWidth,
       });
     };
 
@@ -140,9 +160,8 @@ export function ScrollSpine() {
 
       const probe = window.innerHeight * 0.6;
       const progress = Math.min(1, Math.max(0, (probe - rect.top) / rect.height));
-      const reached = progress * rect.height;
 
-      clip.current?.setAttribute("height", String(reached));
+      clip.current?.setAttribute("height", String(progress * rect.height));
 
       const points = trail.current;
       if (points.length && head.current) {
@@ -170,14 +189,13 @@ export function ScrollSpine() {
     };
   }, [samples]);
 
-  const shape = useMemo(() => ribbon(samples), [samples]);
+  const shape = useMemo(
+    () => ribbon(samples, geometry.minWidth, geometry.maxWidth),
+    [samples, geometry.minWidth, geometry.maxWidth],
+  );
 
   return (
-    <div
-      ref={host}
-      aria-hidden
-      className="pointer-events-none absolute inset-0 z-10 hidden lg:block"
-    >
+    <div ref={host} aria-hidden className="pointer-events-none absolute inset-0 z-10">
       {geometry.d && (
         <svg
           width={geometry.width}
@@ -199,9 +217,29 @@ export function ScrollSpine() {
               <stop offset="72%" stopColor="var(--spine-mid)" />
               <stop offset="100%" stopColor="var(--spine-end)" />
             </linearGradient>
+            <linearGradient
+              id="ribbon-flow"
+              gradientUnits="userSpaceOnUse"
+              spreadMethod="repeat"
+              x1="0"
+              y1="0"
+              x2="0"
+              y2={FLOW_PERIOD}
+            >
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+              <stop offset="42%" stopColor="#ffffff" stopOpacity="0" />
+              <stop offset="50%" stopColor="#ffffff" stopOpacity="0.32" />
+              <stop offset="58%" stopColor="#ffffff" stopOpacity="0" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </linearGradient>
             <clipPath id="ribbon-clip">
               <rect ref={clip} x="0" y="0" width={geometry.width} height="0" />
             </clipPath>
+            {shape && (
+              <clipPath id="ribbon-shape">
+                <polygon points={shape} />
+              </clipPath>
+            )}
           </defs>
 
           <path ref={centerPath} d={geometry.d} fill="none" stroke="none" />
@@ -211,6 +249,18 @@ export function ScrollSpine() {
               <polygon points={shape} fill="var(--spine-track)" opacity="0.16" />
               <g className="ribbon-glow">
                 <polygon points={shape} fill="url(#ribbon-fill)" clipPath="url(#ribbon-clip)" />
+              </g>
+              <g clipPath="url(#ribbon-shape)">
+                <g clipPath="url(#ribbon-clip)">
+                  <rect
+                    className="ribbon-flow"
+                    x="0"
+                    y={-FLOW_PERIOD}
+                    width={geometry.width}
+                    height={geometry.height + FLOW_PERIOD * 2}
+                    fill="url(#ribbon-flow)"
+                  />
+                </g>
               </g>
               <g ref={head} opacity="0">
                 <circle r="16" fill="var(--spine-end)" opacity="0.14" />

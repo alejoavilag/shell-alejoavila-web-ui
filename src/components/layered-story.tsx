@@ -96,12 +96,12 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
           key={section.id}
           data-layer={section.id}
           aria-labelledby={`${section.id}-title`}
-          className="relative z-10 flex min-h-svh snap-start items-center py-20"
+          className="relative z-10 flex min-h-svh snap-start items-center pt-12 pb-28 sm:py-20"
         >
           <div className="mx-auto w-full max-w-6xl px-4 lg:pl-20">
             <article
               data-spine-box
-              className="panel panel-pass rounded-2xl p-8 shadow-[0_0_60px_rgba(34,211,238,0.06)] sm:p-10 lg:max-w-[38rem]"
+              className="panel panel-pass rounded-2xl p-6 shadow-[0_0_60px_rgba(34,211,238,0.06)] sm:p-10 lg:max-w-[38rem]"
             >
               <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
                 <span aria-hidden className="h-px w-8 bg-accent" />
