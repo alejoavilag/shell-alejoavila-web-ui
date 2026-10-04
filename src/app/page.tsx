@@ -74,13 +74,10 @@ const FACTS = [
 export default function Home() {
   return (
     <main className="relative">
-      <ScrollSpine />
-
       <div className="zone-light relative">
-        <header className="mx-auto max-w-6xl px-4 lg:pl-20">
+        <header className="snap-start mx-auto max-w-6xl px-4 lg:pl-20">
           <div className="hero-dissolve relative flex h-dvh flex-col justify-center">
             <p
-              data-spine-point
               className="inline-flex w-fit items-center gap-2 rounded-full border border-border-strong px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-accent"
             >
               <span className="pulse-ring size-1.5 rounded-full bg-accent" />
@@ -120,19 +117,13 @@ export default function Home() {
                 GitHub
               </a>
             </div>
-
-            <p className="absolute inset-x-0 bottom-10 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] text-text-muted">
-              <span aria-hidden className="h-px w-10 bg-border-strong" />
-              Scroll
-            </p>
           </div>
         </header>
 
         <section
           id="perfil"
-          data-spine-point
           aria-labelledby="perfil-title"
-          className="mx-auto max-w-6xl scroll-mt-16 border-t border-border px-4 py-28 lg:pl-20"
+          className="panel-pass mx-auto flex min-h-dvh max-w-6xl snap-start flex-col justify-center px-4 py-20 lg:pl-20"
         >
           <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
             <span aria-hidden className="h-px w-8 bg-accent" />
@@ -178,13 +169,12 @@ export default function Home() {
         </section>
       </div>
 
-      <div id="zone-fade" className="zone-fade h-[32vh]" />
-
-      <section id="stack" className="relative pt-4 pb-8">
+      <section id="stack" className="relative">
+        <ScrollSpine />
         <LayeredStory sections={SECTIONS} />
       </section>
 
-      <footer className="mx-auto max-w-6xl border-t border-border px-4 py-12 lg:pl-20">
+      <footer className="mx-auto max-w-6xl snap-end border-t border-border px-4 py-16 lg:pl-20">
         <p className="font-mono text-xs text-text-muted">
           Este sitio corre en Google Cloud dentro de la capa gratuita, desplegado con
           Terraform desde GitHub Actions sin llaves de larga vida.

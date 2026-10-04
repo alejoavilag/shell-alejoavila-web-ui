@@ -26,7 +26,7 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
           visible ? (visible.target.getAttribute("data-layer") as LayerId) : null,
         );
       },
-      { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
+      { rootMargin: "-40% 0px -40% 0px", threshold: 0 },
     );
 
     nodes.forEach((node) => observer.observe(node));
@@ -34,46 +34,12 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
   }, []);
 
   return (
-    <div
-      ref={container}
-      className="mx-auto grid max-w-6xl gap-10 px-4 lg:grid-cols-[1fr_minmax(0,21rem)] lg:gap-14 lg:pl-20"
-    >
-      <div className="order-2 space-y-24 py-24 lg:order-1">
-        {sections.map((section) => (
-          <section
-            key={section.id}
-            data-layer={section.id}
-            data-spine-box
-            aria-labelledby={`${section.id}-title`}
-            className="panel rounded-2xl p-8 shadow-[0_0_60px_rgba(34,211,238,0.05)] sm:p-10"
-          >
-            <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
-              <span aria-hidden className="h-px w-8 bg-accent" />
-              {section.eyebrow}
-            </p>
-            <h2
-              id={`${section.id}-title`}
-              className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl"
-            >
-              {section.title}
-            </h2>
-            <p className="mt-5 max-w-prose text-lg leading-relaxed text-text-muted">
-              {section.lead}
-            </p>
-            <ul className="mt-8 space-y-3">
-              {section.points.map((point) => (
-                <li key={point} className="flex gap-3 text-text-muted">
-                  <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
-                  <span className="leading-relaxed">{point}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
-      </div>
-
-      <div className="order-1 lg:order-2">
-        <div className="panel sticky top-6 rounded-2xl p-5 shadow-[0_0_70px_rgba(34,211,238,0.07)] lg:mt-24">
+    <div ref={container}>
+      <div
+        className="pointer-events-none fixed inset-y-0 z-20 hidden w-[20rem] items-center lg:flex lg:right-[calc(max(1rem,50%-36rem)+1rem)]"
+        style={{ opacity: "var(--dark-mix)" }}
+      >
+        <div className="panel w-full rounded-2xl p-5 shadow-[0_0_70px_rgba(34,211,238,0.08)]">
           <ArchitectureDiagram activeLayer={active} />
           <p
             aria-live="polite"
@@ -83,6 +49,44 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
           </p>
         </div>
       </div>
+
+      {sections.map((section) => (
+        <section
+          key={section.id}
+          data-layer={section.id}
+          aria-labelledby={`${section.id}-title`}
+          className="flex min-h-dvh snap-start items-center py-16"
+        >
+          <div className="mx-auto w-full max-w-6xl px-4 lg:pr-[22rem] lg:pl-20">
+            <article
+              data-spine-box
+              className="panel panel-pass rounded-2xl p-8 shadow-[0_0_60px_rgba(34,211,238,0.05)] sm:p-10"
+            >
+              <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+                <span aria-hidden className="h-px w-8 bg-accent" />
+                {section.eyebrow}
+              </p>
+              <h2
+                id={`${section.id}-title`}
+                className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl"
+              >
+                {section.title}
+              </h2>
+              <p className="mt-5 max-w-prose text-lg leading-relaxed text-text-muted">
+                {section.lead}
+              </p>
+              <ul className="mt-8 space-y-3">
+                {section.points.map((point) => (
+                  <li key={point} className="flex gap-3 text-text-muted">
+                    <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
+                    <span className="leading-relaxed">{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </div>
+        </section>
+      ))}
     </div>
   );
 }

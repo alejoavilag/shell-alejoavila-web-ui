@@ -10,7 +10,7 @@ const MIN_WIDTH = 5;
 const MAX_WIDTH = 30;
 const SAMPLES = 220;
 
-type Stop = { box: boolean; top: number; bottom: number; left: number };
+type Stop = { top: number; bottom: number; left: number };
 type Vec = { x: number; y: number };
 type Geometry = { width: number; height: number; d: string };
 
@@ -32,10 +32,6 @@ function centerline(stops: Stop[], lane: number, height: number) {
   };
 
   for (const stop of stops) {
-    if (!stop.box) {
-      push(lane + 18, stop.top);
-      continue;
-    }
     push(lane, stop.top - APPROACH);
     push(stop.left - BOX_INSET, stop.top + EDGE_PADDING);
     push(stop.left - BOX_INSET, stop.bottom - EDGE_PADDING);
@@ -87,19 +83,19 @@ export function ScrollSpine() {
       if (frame.width === 0) return;
 
       const marks = Array.from(
-        document.querySelectorAll<HTMLElement>("[data-spine-point], [data-spine-box]"),
+        element.parentElement?.querySelectorAll<HTMLElement>("[data-spine-box]") ?? [],
       ).map((mark) => {
         const rect = mark.getBoundingClientRect();
         return {
-          box: mark.hasAttribute("data-spine-box"),
           top: rect.top - frame.top,
           bottom: rect.bottom - frame.top,
           left: rect.left - frame.left,
         };
       });
 
-      const anchors = marks.filter((mark) => mark.box);
-      const columnLeft = (anchors.length ? anchors : marks).reduce(
+      if (!marks.length) return;
+
+      const columnLeft = marks.reduce(
         (min, mark) => Math.min(min, mark.left),
         Number.POSITIVE_INFINITY,
       );

@@ -53,8 +53,6 @@ export function CursorField() {
 
       root.style.setProperty("--cursor-x", `${eased.x}px`);
       root.style.setProperty("--cursor-y", `${eased.y}px`);
-      root.style.setProperty("--cursor-doc-x", `${eased.x + window.scrollX}px`);
-      root.style.setProperty("--cursor-doc-y", `${eased.y + window.scrollY}px`);
 
       frame = requestAnimationFrame(tick);
     };
@@ -68,8 +66,6 @@ export function CursorField() {
       root.classList.remove("cursor-hidden");
       root.style.removeProperty("--cursor-x");
       root.style.removeProperty("--cursor-y");
-      root.style.removeProperty("--cursor-doc-x");
-      root.style.removeProperty("--cursor-doc-y");
     };
   }, [enabled]);
 

@@ -27,8 +27,6 @@
 
   --cursor-x: -50vw;
   --cursor-y: -50vh;
-  --cursor-doc-x: -50vw;
-  --cursor-doc-y: -50vh;
   --dark-mix: 1;
 }
 
@@ -49,7 +47,6 @@
   --glow: rgba(29, 95, 224, 0.22);
   --trace: rgba(16, 60, 130, 0.2);
 
-  background-color: var(--bg);
   color: var(--text);
 }
 
@@ -71,6 +68,13 @@
 html {
   scroll-behavior: smooth;
   background-color: var(--ink);
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 body {
@@ -78,52 +82,39 @@ body {
   background-color: transparent;
   color: var(--text);
   font-family: var(--font-sans), system-ui, sans-serif;
-  overflow-x: hidden;
 }
 
-.zone-light {
-  position: relative;
-  isolation: isolate;
+@media (min-width: 1024px) and (min-height: 680px) {
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-snap-type: y mandatory;
+    }
+  }
 }
 
-.zone-light::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    radial-gradient(circle, var(--grid) 1px, transparent 1px),
-    radial-gradient(ellipse 70% 50% at 85% 0%, rgba(29, 95, 224, 0.07), transparent 65%),
-    radial-gradient(ellipse 60% 45% at 5% 30%, rgba(109, 75, 216, 0.05), transparent 70%);
-  background-size:
-    34px 34px,
-    cover,
-    cover;
+@keyframes panel-pass {
+  0% {
+    opacity: 0;
+    transform: translateY(72px) scale(0.96);
+  }
+  28%,
+  72% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-72px) scale(0.96);
+  }
 }
 
-.zone-light::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    radial-gradient(circle, rgba(29, 95, 224, 0.5) 1px, transparent 1px),
-    radial-gradient(
-      circle 260px at var(--cursor-doc-x) var(--cursor-doc-y),
-      rgba(29, 95, 224, 0.08),
-      transparent 70%
-    );
-  background-size:
-    34px 34px,
-    cover;
-  mask-image: radial-gradient(
-    circle 230px at var(--cursor-doc-x) var(--cursor-doc-y),
-    #000 0%,
-    rgba(0, 0, 0, 0.5) 45%,
-    transparent 75%
-  );
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .panel-pass {
+      animation: panel-pass linear both;
+      animation-timeline: view();
+    }
+  }
 }
 
 @keyframes hero-dissolve {
@@ -144,10 +135,6 @@ body {
   }
 }
 
-.zone-fade {
-  background: linear-gradient(to bottom, var(--paper) 0%, #9fb0cc 34%, #243049 68%, var(--ink) 100%);
-}
-
 .panel {
   background: var(--surface-glass);
   backdrop-filter: blur(12px);
@@ -158,6 +145,30 @@ body {
   background-image: radial-gradient(circle, var(--grid) 1px, transparent 1px);
   background-size: 34px 34px;
   mask-image: radial-gradient(ellipse 85% 70% at 50% 30%, #000 10%, transparent 80%);
+}
+
+.backdrop-dots-light {
+  background-image: radial-gradient(circle, rgba(16, 60, 130, 0.09) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+.backdrop-reveal-light {
+  background-image:
+    radial-gradient(circle, rgba(29, 95, 224, 0.45) 1px, transparent 1px),
+    radial-gradient(
+      circle 280px at var(--cursor-x) var(--cursor-y),
+      rgba(29, 95, 224, 0.07),
+      transparent 70%
+    );
+  background-size:
+    34px 34px,
+    cover;
+}
+
+.backdrop-aurora-light {
+  background:
+    radial-gradient(ellipse 70% 50% at 85% 0%, rgba(29, 95, 224, 0.08), transparent 65%),
+    radial-gradient(ellipse 60% 45% at 5% 30%, rgba(109, 75, 216, 0.06), transparent 70%);
 }
 
 .backdrop-aurora {
