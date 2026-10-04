@@ -5,6 +5,11 @@ import { CircuitField } from "./circuit-field";
 import { CodeRain } from "./code-rain";
 
 const DARK_ZONE_ID = "stack";
+
+function smoothstep(value: number) {
+  const t = Math.min(1, Math.max(0, value));
+  return t * t * (3 - 2 * t);
+}
 const LIGHT = { opacity: "calc(1 - var(--dark-mix))" } as const;
 const DARK = { opacity: "var(--dark-mix)" } as const;
 
@@ -17,9 +22,14 @@ export function SiteBackdrop() {
       frame = 0;
       const zone = document.getElementById(DARK_ZONE_ID);
       if (!zone) return;
-      const top = zone.getBoundingClientRect().top;
-      const mix = Math.min(1, Math.max(0, 1 - top / window.innerHeight));
-      root.style.setProperty("--dark-mix", mix.toFixed(3));
+
+      const rect = zone.getBoundingClientRect();
+      const viewport = window.innerHeight;
+      const entering = smoothstep(1 - rect.top / viewport);
+      const leaving = smoothstep(rect.bottom / viewport);
+
+      root.style.setProperty("--dark-mix", entering.toFixed(3));
+      root.style.setProperty("--diagram-mix", (entering * leaving).toFixed(3));
     };
 
     const schedule = () => {
@@ -35,20 +45,21 @@ export function SiteBackdrop() {
       window.removeEventListener("resize", schedule);
       if (frame) cancelAnimationFrame(frame);
       root.style.removeProperty("--dark-mix");
+      root.style.removeProperty("--diagram-mix");
     };
   }, []);
 
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      <div className="absolute inset-0 bg-[var(--paper)]" style={LIGHT} />
+      <div className="zone-crossfade absolute inset-0 bg-[var(--paper)]" style={LIGHT} />
 
-      <div className="absolute inset-0" style={LIGHT}>
+      <div className="zone-crossfade absolute inset-0" style={LIGHT}>
         <div className="backdrop-dots-light absolute inset-0" />
         <div className="backdrop-reveal-light cursor-reveal absolute inset-0" />
         <div className="backdrop-aurora-light absolute inset-0" />
       </div>
 
-      <div className="absolute inset-0" style={DARK}>
+      <div className="zone-crossfade absolute inset-0" style={DARK}>
         <div className="backdrop-dots absolute inset-0" />
         <div className="absolute inset-0">
           <CircuitField />

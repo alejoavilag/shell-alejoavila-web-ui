@@ -55,8 +55,8 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
   return (
     <div ref={container}>
       <div
-        className="pointer-events-none fixed inset-0 z-0 hidden items-center lg:flex"
-        style={{ opacity: "var(--dark-mix)" }}
+        className="zone-crossfade pointer-events-none fixed inset-0 z-0 hidden items-center lg:flex"
+        style={{ opacity: "var(--diagram-mix)" }}
       >
         <div className="mx-auto flex w-full max-w-6xl justify-end px-4">
           <ArchitectureDiagram
@@ -67,8 +67,8 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
       </div>
 
       <div
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center pb-5 lg:hidden"
-        style={{ opacity: "var(--dark-mix)" }}
+        className="zone-crossfade pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center pb-5 lg:hidden"
+        style={{ opacity: "var(--diagram-mix)" }}
       >
         <p className="panel flex items-center gap-3 rounded-full px-4 py-2">
           <span aria-hidden className="flex items-center gap-1.5">
