@@ -34,9 +34,9 @@ function buildColumns() {
       id: i,
       glyphs: `${lines}\n${lines}`,
       left: (i / COLUMNS) * 100 + random() * 2,
-      duration: 40 + random() * 60,
+      duration: 45 + random() * 65,
       delay: -random() * 50,
-      opacity: 0.1 + random() * 0.12,
+      opacity: 0.07 + random() * 0.08,
     };
   });
 }

@@ -50,12 +50,10 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -2;
-  background-image:
-    linear-gradient(to right, var(--grid) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 20%, transparent 75%);
+  z-index: -3;
+  background-image: radial-gradient(circle, var(--grid) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(ellipse 85% 70% at 50% 25%, #000 10%, transparent 80%);
 }
 
 body::after {
@@ -105,6 +103,46 @@ body::after {
   }
 }
 
+@keyframes circuit-pulse {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  10%,
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes via-halo {
+  0%,
+  100% {
+    opacity: 0.05;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 0.22;
+    transform: scale(1);
+  }
+}
+
+.circuit-pulse {
+  animation-name: circuit-pulse;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.circuit-via-halo {
+  opacity: 0.08;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: via-halo 5s ease-in-out infinite;
+}
+
 @keyframes pulse-ring {
   0%,
   100% {
@@ -130,6 +168,8 @@ body::after {
 
   .rain-column,
   .pulse-ring,
+  .circuit-pulse,
+  .circuit-via-halo,
   [class*="packet"] {
     animation: none !important;
   }
