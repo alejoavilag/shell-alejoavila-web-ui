@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { CircuitField } from "@/components/circuit-field";
-import { CodeRain } from "@/components/code-rain";
+import { CursorField } from "@/components/cursor-field";
+import { SiteBackdrop } from "@/components/site-backdrop";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -98,8 +98,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <CircuitField />
-        <CodeRain />
+        <SiteBackdrop />
+        <CursorField />
         {children}
         <script
           type="application/ld+json"

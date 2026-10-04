@@ -3,20 +3,51 @@
 :root {
   color-scheme: dark;
 
+  --paper: #f3f6fb;
+  --ink: #04060c;
+
   --bg: #04060c;
-  --bg-deep: #02040a;
   --surface: #0a1020;
   --surface-glass: rgba(14, 22, 42, 0.72);
   --border: rgba(110, 170, 235, 0.14);
   --border-strong: rgba(110, 170, 235, 0.3);
-  --grid: rgba(90, 150, 220, 0.055);
+  --grid: rgba(90, 150, 220, 0.07);
   --text: #e9f0fa;
   --text-muted: #7f90aa;
   --accent: #22d3ee;
-  --accent-dim: #0e7490;
   --accent-2: #a78bfa;
+  --accent-contrast: #04060c;
   --glow: rgba(34, 211, 238, 0.45);
   --trace: rgba(110, 170, 235, 0.22);
+
+  --spine-start: #1d5fe0;
+  --spine-end: #22d3ee;
+  --spine-track: rgba(122, 142, 178, 0.4);
+
+  --cursor-x: -50vw;
+  --cursor-y: -50vh;
+  --dark-mix: 1;
+}
+
+.zone-light {
+  color-scheme: light;
+
+  --bg: var(--paper);
+  --surface: #ffffff;
+  --surface-glass: rgba(255, 255, 255, 0.76);
+  --border: rgba(16, 42, 86, 0.11);
+  --border-strong: rgba(16, 42, 86, 0.24);
+  --grid: rgba(16, 60, 130, 0.07);
+  --text: #0a1120;
+  --text-muted: #4e5d78;
+  --accent: #1d5fe0;
+  --accent-2: #6d4bd8;
+  --accent-contrast: #ffffff;
+  --glow: rgba(29, 95, 224, 0.22);
+  --trace: rgba(16, 60, 130, 0.2);
+
+  background-color: var(--bg);
+  color: var(--text);
 }
 
 @theme inline {
@@ -28,6 +59,7 @@
   --color-text-muted: var(--text-muted);
   --color-accent: var(--accent);
   --color-accent-2: var(--accent-2);
+  --color-accent-contrast: var(--accent-contrast);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -35,36 +67,40 @@
 
 html {
   scroll-behavior: smooth;
-  background-color: var(--bg-deep);
+  background-color: var(--ink);
 }
 
 body {
   position: relative;
-  background-color: var(--bg);
+  background-color: transparent;
   color: var(--text);
   font-family: var(--font-sans), system-ui, sans-serif;
   overflow-x: hidden;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -3;
-  background-image: radial-gradient(circle, var(--grid) 1px, transparent 1px);
-  background-size: 34px 34px;
-  mask-image: radial-gradient(ellipse 85% 70% at 50% 25%, #000 10%, transparent 80%);
+.zone-light {
+  position: relative;
+  isolation: isolate;
 }
 
-body::after {
+.zone-light::before {
   content: "";
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(ellipse 60% 40% at 20% 0%, rgba(34, 211, 238, 0.09), transparent 60%),
-    radial-gradient(ellipse 50% 40% at 85% 15%, rgba(167, 139, 250, 0.07), transparent 65%);
+  background-image:
+    radial-gradient(circle, var(--grid) 1px, transparent 1px),
+    radial-gradient(ellipse 70% 50% at 85% 0%, rgba(29, 95, 224, 0.07), transparent 65%),
+    radial-gradient(ellipse 60% 45% at 5% 30%, rgba(109, 75, 216, 0.05), transparent 70%);
+  background-size:
+    34px 34px,
+    cover,
+    cover;
+}
+
+.zone-fade {
+  background: linear-gradient(to bottom, var(--paper) 0%, #9fb0cc 34%, #243049 68%, var(--ink) 100%);
 }
 
 .glow-text {
@@ -75,6 +111,57 @@ body::after {
   background: var(--surface-glass);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border);
+}
+
+.backdrop-dots {
+  background-image: radial-gradient(circle, var(--grid) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(ellipse 85% 70% at 50% 30%, #000 10%, transparent 80%);
+}
+
+.backdrop-aurora {
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 0%, rgba(34, 211, 238, 0.1), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 15%, rgba(167, 139, 250, 0.08), transparent 65%);
+}
+
+.cursor-reveal {
+  mask-image: radial-gradient(
+    circle 260px at var(--cursor-x) var(--cursor-y),
+    #000 0%,
+    rgba(0, 0, 0, 0.45) 45%,
+    transparent 72%
+  );
+}
+
+.cursor-spotlight {
+  mix-blend-mode: screen;
+  background: radial-gradient(
+    circle 300px at var(--cursor-x) var(--cursor-y),
+    rgba(34, 211, 238, 0.09),
+    transparent 70%
+  );
+}
+
+.cursor-tint {
+  --tint: color-mix(
+    in srgb,
+    var(--spine-end) calc(var(--dark-mix) * 100%),
+    var(--spine-start)
+  );
+}
+
+.cursor-hidden,
+.cursor-hidden * {
+  cursor: none !important;
+}
+
+.cursor-ring {
+  transition:
+    width 0.22s ease,
+    height 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease;
 }
 
 @keyframes packet {
@@ -130,6 +217,16 @@ body::after {
   }
 }
 
+@keyframes pulse-ring {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
 .circuit-pulse {
   animation-name: circuit-pulse;
   animation-timing-function: linear;
@@ -141,16 +238,6 @@ body::after {
   transform-box: fill-box;
   transform-origin: center;
   animation: via-halo 5s ease-in-out infinite;
-}
-
-@keyframes pulse-ring {
-  0%,
-  100% {
-    opacity: 0.35;
-  }
-  50% {
-    opacity: 0.9;
-  }
 }
 
 .rain-column {
@@ -185,7 +272,7 @@ body::after {
 
 ::selection {
   background-color: var(--accent);
-  color: var(--bg-deep);
+  color: var(--accent-contrast);
 }
 
 :focus-visible {

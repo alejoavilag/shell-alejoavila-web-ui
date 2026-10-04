@@ -23,28 +23,27 @@ const VIAS: Via[] = [
   { x: 1178, y: 614, delay: 2.1 },
 ];
 
-export function CircuitField() {
+export function CircuitField({
+  strokeOpacity = 0.14,
+  animated = true,
+}: {
+  strokeOpacity?: number;
+  animated?: boolean;
+}) {
   return (
-    <div
-      aria-hidden
-      className="pointer-events-none fixed inset-0 -z-[2] overflow-hidden"
-      style={{
-        maskImage:
-          "radial-gradient(ellipse 55% 60% at 45% 45%, transparent 20%, #000 90%)",
-      }}
+    <svg
+      viewBox="0 0 1440 900"
+      preserveAspectRatio="xMidYMid slice"
+      className="h-full w-full"
     >
-      <svg
-        viewBox="0 0 1440 900"
-        preserveAspectRatio="xMidYMid slice"
-        className="h-full w-full"
-      >
-        <g fill="none" stroke="var(--accent)" strokeOpacity="0.14" strokeWidth="1">
-          {TRACES.map((trace) => (
-            <path key={trace.d} d={trace.d} />
-          ))}
-        </g>
-
+      <g fill="none" stroke="var(--accent)" strokeOpacity={strokeOpacity} strokeWidth="1">
         {TRACES.map((trace) => (
+          <path key={trace.d} d={trace.d} />
+        ))}
+      </g>
+
+      {animated &&
+        TRACES.map((trace) => (
           <circle
             key={`pulse-${trace.d}`}
             r="2"
@@ -58,8 +57,9 @@ export function CircuitField() {
           />
         ))}
 
-        {VIAS.map((via) => (
-          <g key={`${via.x}-${via.y}`}>
+      {VIAS.map((via) => (
+        <g key={`${via.x}-${via.y}`}>
+          {animated && (
             <circle
               cx={via.x}
               cy={via.y}
@@ -68,10 +68,16 @@ export function CircuitField() {
               className="circuit-via-halo"
               style={{ animationDelay: `${via.delay}s` }}
             />
-            <circle cx={via.x} cy={via.y} r="2.4" fill="var(--accent)" fillOpacity="0.35" />
-          </g>
-        ))}
-      </svg>
-    </div>
+          )}
+          <circle
+            cx={via.x}
+            cy={via.y}
+            r="2.4"
+            fill="var(--accent)"
+            fillOpacity={strokeOpacity * 2.5}
+          />
+        </g>
+      ))}
+    </svg>
   );
 }

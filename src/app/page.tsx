@@ -1,4 +1,5 @@
 import { LayeredStory, type Section } from "@/components/layered-story";
+import { ScrollSpine } from "@/components/scroll-spine";
 
 const SECTIONS: Section[] = [
   {
@@ -61,59 +62,125 @@ const SECTIONS: Section[] = [
   },
 ];
 
+const STACK = ["TypeScript", "NestJS", "Angular", "React", "Terraform", "AWS", "GCP"];
+
+const FACTS = [
+  { label: "Experiencia", value: "6 años en software, todos en banca digital" },
+  { label: "Antes", value: "5 años en mantenimiento y automatización industrial" },
+  { label: "Idiomas", value: "Español nativo · English B1, lectura y escritura técnica" },
+  { label: "Ubicación", value: "Bogotá, Colombia · Abierto a trabajo remoto" },
+];
+
 export default function Home() {
-  const hero = (
-    <header className="relative">
-      <div className="relative flex min-h-[78vh] flex-col justify-center py-20">
-          <p className="inline-flex w-fit items-center gap-2 rounded-full border border-border-strong px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
-            <span className="pulse-ring size-1.5 rounded-full bg-accent shadow-[0_0_8px_var(--glow)]" />
-            Bogotá · Abierto a trabajo remoto
-          </p>
-          <h1 className="glow-text mt-7 text-5xl font-semibold tracking-tight sm:text-7xl">
-            Alejandro Ávila
-          </h1>
-          <p className="mt-4 font-mono text-lg tracking-tight text-accent sm:text-xl">
-            Senior Full-Stack Engineer · Platform &amp; Cloud
-          </p>
-          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-text-muted">
-            Construyo plataformas de banca digital de punta a punta: microfrontends,
-            microservicios e infraestructura como código.
-          </p>
-          <ul className="mt-10 flex flex-wrap gap-2">
-            {["TypeScript", "NestJS", "Angular", "React", "Terraform", "AWS", "GCP"].map(
-              (tech) => (
+  return (
+    <main className="relative">
+      <ScrollSpine />
+
+      <div className="zone-light relative">
+        <header className="mx-auto max-w-6xl px-4 lg:pl-20">
+          <div className="flex min-h-[86vh] flex-col justify-center py-20">
+            <p
+              data-spine-node
+              className="inline-flex w-fit items-center gap-2 rounded-full border border-border-strong px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-accent"
+            >
+              <span className="pulse-ring size-1.5 rounded-full bg-accent" />
+              Bogotá · Abierto a trabajo remoto
+            </p>
+            <h1 className="mt-7 text-5xl font-semibold tracking-tight sm:text-7xl">
+              Alejandro Ávila
+            </h1>
+            <p className="mt-4 font-mono text-lg tracking-tight text-accent sm:text-xl">
+              Senior Full-Stack Engineer · Platform &amp; Cloud
+            </p>
+            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-text-muted">
+              Construyo plataformas de banca digital de punta a punta: microfrontends,
+              microservicios e infraestructura como código.
+            </p>
+            <ul className="mt-10 flex flex-wrap gap-2">
+              {STACK.map((tech) => (
                 <li
                   key={tech}
-                  className="rounded-md border border-border bg-surface/60 px-3 py-1 font-mono text-xs text-text-muted"
+                  className="rounded-md border border-border bg-surface px-3 py-1 font-mono text-xs text-text-muted"
                 >
                   {tech}
                 </li>
-              ),
-            )}
-          </ul>
-          <div className="mt-12 flex flex-wrap gap-4">
-            <a
-              href="#edge-title"
-              className="rounded-lg bg-accent px-5 py-3 font-medium text-[#04060c] shadow-[0_0_28px_var(--glow)] transition-shadow hover:shadow-[0_0_44px_var(--glow)]"
-            >
-              Recorrer la arquitectura
-            </a>
-            <a
-              href="https://github.com/alejoavilag"
-              className="rounded-lg border border-border-strong px-5 py-3 font-medium transition-colors hover:border-accent hover:text-accent"
-            >
-              GitHub
-            </a>
-        </div>
+              ))}
+            </ul>
+            <div className="mt-12 flex flex-wrap gap-4">
+              <a
+                href="#stack"
+                className="rounded-lg bg-accent px-5 py-3 font-medium text-accent-contrast shadow-[0_8px_30px_var(--glow)] transition-shadow hover:shadow-[0_12px_44px_var(--glow)]"
+              >
+                Recorrer la arquitectura
+              </a>
+              <a
+                href="https://github.com/alejoavilag"
+                className="rounded-lg border border-border-strong px-5 py-3 font-medium transition-colors hover:border-accent hover:text-accent"
+              >
+                GitHub
+              </a>
+            </div>
+          </div>
+        </header>
+
+        <section
+          aria-labelledby="perfil-title"
+          className="mx-auto max-w-6xl border-t border-border px-4 py-24 lg:pl-20"
+        >
+          <p
+            data-spine-node
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent"
+          >
+            <span aria-hidden className="h-px w-8 bg-accent" />
+            Perfil
+          </p>
+          <h2
+            id="perfil-title"
+            className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl"
+          >
+            No llegué al software por el camino corto
+          </h2>
+          <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+            <div className="max-w-prose space-y-6 text-lg leading-relaxed text-text-muted">
+              <p>
+                Soy ingeniero mecatrónico y desarrollador full-stack senior. Trabajo en
+                plataformas de originación de crédito empresarial, cubriendo las tres
+                capas: el frontend en arquitectura de microfrontends, los servicios de
+                backend, y la infraestructura que los sostiene.
+              </p>
+              <p>
+                Pasé casi cinco años manteniendo, reparando y poniendo a punto maquinaria
+                industrial: tarjetas electrónicas, sistemas de control y potencia, equipos
+                importados que tenían que funcionar en planta. Esa etapa me dejó un sesgo
+                que sigo usando — pienso el sistema completo antes que las piezas, y asumo
+                que todo lo que se despliega eventualmente falla.
+              </p>
+              <p className="text-text">
+                En software eso se traduce en algo concreto: no entrego un endpoint sin
+                saber cómo se despliega, cómo se observa y cómo se asegura.
+              </p>
+            </div>
+            <dl className="h-fit divide-y divide-border rounded-2xl border border-border bg-surface">
+              {FACTS.map((fact) => (
+                <div key={fact.label} className="px-5 py-4">
+                  <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+                    {fact.label}
+                  </dt>
+                  <dd className="mt-1.5 leading-relaxed text-text-muted">{fact.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
       </div>
-    </header>
-  );
 
-  return (
-    <main>
-      <LayeredStory sections={SECTIONS} hero={hero} />
+      <div id="zone-fade" className="zone-fade h-[32vh]" />
 
-      <footer className="mx-auto max-w-6xl border-t border-border px-4 py-12">
+      <section id="stack" className="relative pt-4 pb-8">
+        <LayeredStory sections={SECTIONS} />
+      </section>
+
+      <footer className="mx-auto max-w-6xl border-t border-border px-4 py-12 lg:pl-20">
         <p className="font-mono text-xs text-text-muted">
           Este sitio corre en Google Cloud dentro de la capa gratuita, desplegado con
           Terraform desde GitHub Actions sin llaves de larga vida.
