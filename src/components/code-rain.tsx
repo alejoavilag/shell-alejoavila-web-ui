@@ -50,7 +50,7 @@ export function CodeRain() {
       className="pointer-events-none absolute inset-0 overflow-hidden"
       style={{
         maskImage:
-          "radial-gradient(ellipse 48% 55% at 38% 42%, transparent 10%, #000 85%)",
+          "radial-gradient(ellipse 64% 62% at 50% 45%, transparent 8%, #000 88%)",
       }}
     >
       {COLUMN_DATA.map((column) => (

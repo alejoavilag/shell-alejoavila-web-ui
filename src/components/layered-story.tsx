@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArchitectureDiagram, type LayerId } from "./architecture-diagram";
+import { ArchitectureDiagram, LAYER_ORDER, type LayerId } from "./architecture-diagram";
+
+export type Column = { label: string; sub: string; points: string[] };
 
 export type Section = {
   id: LayerId;
   eyebrow: string;
   title: string;
   lead: string;
-  points: string[];
+  points?: string[];
+  columns?: Column[];
 };
 
 export function LayeredStory({ sections }: { sections: Section[] }) {
@@ -33,21 +36,46 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
     return () => observer.disconnect();
   }, []);
 
+  const reached = active ? LAYER_ORDER.indexOf(active) : -1;
+  const current = sections.find((section) => section.id === active);
+
   return (
     <div ref={container}>
       <div
-        className="pointer-events-none fixed inset-y-0 z-20 hidden w-[20rem] items-center lg:flex lg:right-[calc(max(1rem,50%-36rem)+1rem)]"
+        className="pointer-events-none fixed inset-0 z-0 hidden items-center lg:flex"
         style={{ opacity: "var(--dark-mix)" }}
       >
-        <div className="panel w-full rounded-2xl p-5 shadow-[0_0_70px_rgba(34,211,238,0.08)]">
-          <ArchitectureDiagram activeLayer={active} />
-          <p
-            aria-live="polite"
-            className="mt-4 text-center font-mono text-[11px] uppercase tracking-[0.22em] text-accent"
-          >
-            {active ? sections.find((s) => s.id === active)?.eyebrow : "Arquitectura del sitio"}
-          </p>
+        <div className="mx-auto flex w-full max-w-6xl justify-end px-4">
+          <ArchitectureDiagram
+            activeLayer={active}
+            className="h-[64svh] w-auto [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000_58%,transparent_100%)]"
+          />
         </div>
+      </div>
+
+      <div
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center pb-5 lg:hidden"
+        style={{ opacity: "var(--dark-mix)" }}
+      >
+        <p className="panel flex items-center gap-3 rounded-full px-4 py-2">
+          <span aria-hidden className="flex items-center gap-1.5">
+            {sections.map((section, index) => (
+              <span
+                key={section.id}
+                className={`block h-1 rounded-full transition-all duration-500 ${
+                  index === reached
+                    ? "w-6 bg-accent"
+                    : index < reached
+                      ? "w-3 bg-accent/50"
+                      : "w-3 bg-border-strong"
+                }`}
+              />
+            ))}
+          </span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-muted">
+            {current ? current.eyebrow : "Arquitectura"}
+          </span>
+        </p>
       </div>
 
       {sections.map((section) => (
@@ -55,12 +83,12 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
           key={section.id}
           data-layer={section.id}
           aria-labelledby={`${section.id}-title`}
-          className="flex min-h-dvh snap-start items-center py-16"
+          className="relative z-10 flex min-h-svh snap-start items-center py-20"
         >
-          <div className="mx-auto w-full max-w-6xl px-4 lg:pr-[22rem] lg:pl-20">
+          <div className="mx-auto w-full max-w-6xl px-4 lg:pl-20">
             <article
               data-spine-box
-              className="panel panel-pass rounded-2xl p-8 shadow-[0_0_60px_rgba(34,211,238,0.05)] sm:p-10"
+              className="panel panel-pass rounded-2xl p-8 shadow-[0_0_60px_rgba(34,211,238,0.06)] sm:p-10 lg:max-w-[38rem]"
             >
               <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
                 <span aria-hidden className="h-px w-8 bg-accent" />
@@ -72,17 +100,45 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
               >
                 {section.title}
               </h2>
-              <p className="mt-5 max-w-prose text-lg leading-relaxed text-text-muted">
-                {section.lead}
-              </p>
-              <ul className="mt-8 space-y-3">
-                {section.points.map((point) => (
-                  <li key={point} className="flex gap-3 text-text-muted">
-                    <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
-                    <span className="leading-relaxed">{point}</span>
-                  </li>
-                ))}
-              </ul>
+              <p className="mt-5 text-lg leading-relaxed text-text-muted">{section.lead}</p>
+
+              {section.points && (
+                <ul className="mt-8 space-y-3">
+                  {section.points.map((point) => (
+                    <li key={point} className="flex gap-3 text-text-muted">
+                      <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
+                      <span className="leading-relaxed">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {section.columns && (
+                <div className="mt-8 grid gap-5 sm:grid-cols-2">
+                  {section.columns.map((column) => (
+                    <div
+                      key={column.label}
+                      className="rounded-xl border border-border bg-bg/40 p-5"
+                    >
+                      <p className="font-medium text-text">{column.label}</p>
+                      <p className="mt-0.5 font-mono text-[11px] tracking-[0.1em] text-accent">
+                        {column.sub}
+                      </p>
+                      <ul className="mt-4 space-y-2.5">
+                        {column.points.map((point) => (
+                          <li key={point} className="flex gap-2.5 text-sm text-text-muted">
+                            <span
+                              aria-hidden
+                              className="mt-1.5 size-1 shrink-0 rounded-full bg-accent"
+                            />
+                            <span className="leading-relaxed">{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              )}
             </article>
           </div>
         </section>

@@ -17,12 +17,26 @@ const SECTIONS: Section[] = [
     id: "frontend",
     eyebrow: "Capa de frontend",
     title: "Microfrontends que se componen en runtime",
-    lead: "Trabajo frontend a escala con arquitectura de microfrontends: aplicaciones desplegables de forma independiente que se ensamblan en el navegador.",
-    points: [
-      "Angular con Module Federation para despliegues independientes por equipo",
-      "Web Components con Stencil, consumibles desde cualquier shell sin importar su stack",
-      "Librerías de UI compartidas y versionadas entre varios productos",
-      "React y Next.js en proyectos propios, incluido este sitio",
+    lead: "Dos aplicaciones distintas, con stacks distintos y despliegues independientes, se ensamblan en el navegador del visitante. Esta página es el ejemplo: lo que estás leyendo y el chat son piezas separadas.",
+    columns: [
+      {
+        label: "Shell",
+        sub: "Next.js · React",
+        points: [
+          "Orquesta rutas, layout y estado compartido entre los remotos",
+          "Module Federation para cargar aplicaciones de otros equipos sin recompilar",
+          "Librerías de UI versionadas y consumidas por varios productos",
+        ],
+      },
+      {
+        label: "Widget",
+        sub: "Angular · Stencil",
+        points: [
+          "Empaquetado como Web Component, montable en cualquier shell",
+          "Sin acoplamiento al framework que lo hospeda",
+          "Se despliega solo, sin tocar el shell",
+        ],
+      },
     ],
   },
   {
@@ -64,6 +78,11 @@ const SECTIONS: Section[] = [
 
 const STACK = ["TypeScript", "NestJS", "Angular", "React", "Terraform", "AWS", "GCP"];
 
+const LINKS = [
+  { href: "https://github.com/alejoavilag", label: "GitHub" },
+  { href: "https://co.linkedin.com/in/alejoavilag", label: "LinkedIn" },
+];
+
 const FACTS = [
   { label: "Experiencia", value: "6 años en software, todos en banca digital" },
   { label: "Antes", value: "5 años en mantenimiento y automatización industrial" },
@@ -75,8 +94,8 @@ export default function Home() {
   return (
     <main className="relative">
       <div className="zone-light relative">
-        <header className="snap-start mx-auto max-w-6xl px-4 lg:pl-20">
-          <div className="hero-dissolve relative flex h-dvh flex-col justify-center">
+        <header className="relative z-10 mx-auto max-w-6xl snap-start px-4 lg:pl-20">
+          <div className="hero-dissolve relative flex h-svh flex-col justify-center">
             <p
               className="inline-flex w-fit items-center gap-2 rounded-full border border-border-strong px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-accent"
             >
@@ -123,7 +142,7 @@ export default function Home() {
         <section
           id="perfil"
           aria-labelledby="perfil-title"
-          className="panel-pass mx-auto flex min-h-dvh max-w-6xl snap-start flex-col justify-center px-4 py-20 lg:pl-20"
+          className="panel-pass relative z-10 mx-auto flex min-h-svh max-w-6xl snap-start flex-col justify-center px-4 py-20 lg:pl-20"
         >
           <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
             <span aria-hidden className="h-px w-8 bg-accent" />
@@ -174,8 +193,36 @@ export default function Home() {
         <LayeredStory sections={SECTIONS} />
       </section>
 
-      <footer className="mx-auto max-w-6xl snap-end border-t border-border px-4 py-16 lg:pl-20">
-        <p className="font-mono text-xs text-text-muted">
+      <footer
+        id="contacto"
+        aria-labelledby="contacto-title"
+        className="relative z-10 mx-auto flex min-h-svh max-w-6xl snap-end flex-col justify-center px-4 py-20 lg:pl-20"
+      >
+        <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+          <span aria-hidden className="h-px w-8 bg-accent" />
+          Contacto
+        </p>
+        <h2
+          id="contacto-title"
+          className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl"
+        >
+          Hablemos
+        </h2>
+        <p className="mt-5 max-w-prose text-lg leading-relaxed text-text-muted">
+          Estoy abierto a posiciones remotas de Senior Full-Stack o Platform Engineer.
+        </p>
+        <div className="mt-10 flex flex-wrap gap-4">
+          {LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="rounded-lg border border-border-strong px-5 py-3 font-medium transition-colors hover:border-accent hover:text-accent"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+        <p className="mt-20 max-w-prose font-mono text-xs leading-relaxed text-text-muted">
           Este sitio corre en Google Cloud dentro de la capa gratuita, desplegado con
           Terraform desde GitHub Actions sin llaves de larga vida.
         </p>
