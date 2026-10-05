@@ -7,7 +7,7 @@
 
 ## Páginas
 
-- [Perfil](https://alejoavila.web.app/): recorrido por las capas de su stack,
+- [Perfil](https://alejoavila.com/): recorrido por las capas de su stack,
   su dominio en banca digital y cómo está construido este sitio.
 
 ## Contacto
