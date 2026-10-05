@@ -1,20 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArchitectureDiagram, LAYER_ORDER, type LayerId } from "./architecture-diagram";
+import { layerPosition, type LayerId } from "@/domain/architecture/layer";
+import type { ArchitectureModel } from "@/domain/architecture/model";
+import type { LayerSection } from "@/domain/content/landing";
+import { ArchitectureDiagram } from "./architecture-diagram";
 
-export type Column = { label: string; sub: string; points: string[] };
-
-export type Section = {
-  id: LayerId;
-  eyebrow: string;
-  title: string;
-  lead: string;
-  points?: string[];
-  columns?: Column[];
-};
-
-export function LayeredStory({ sections }: { sections: Section[] }) {
+export function LayeredStory({
+  sections,
+  model,
+}: {
+  sections: LayerSection[];
+  model: ArchitectureModel;
+}) {
   const [active, setActive] = useState<LayerId | null>(null);
   const container = useRef<HTMLDivElement>(null);
 
@@ -49,17 +47,18 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
     return () => observer.disconnect();
   }, []);
 
-  const reached = active ? LAYER_ORDER.indexOf(active) : -1;
-  const current = sections.find((section) => section.id === active);
+  const reached = active ? layerPosition(active) : -1;
+  const current = sections.find((section) => section.layer === active);
 
   return (
     <div ref={container}>
       <div
-        className="zone-crossfade pointer-events-none fixed inset-0 z-0 hidden items-center lg:flex"
+        className="pointer-events-none fixed inset-0 z-0 hidden items-center lg:flex"
         style={{ opacity: "var(--diagram-mix)" }}
       >
         <div className="mx-auto flex w-full max-w-6xl justify-end px-4">
           <ArchitectureDiagram
+            model={model}
             activeLayer={active}
             className="h-[64svh] w-auto [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000_58%,transparent_100%)]"
           />
@@ -67,14 +66,14 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
       </div>
 
       <div
-        className="zone-crossfade pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center pb-5 lg:hidden"
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center pb-5 lg:hidden"
         style={{ opacity: "var(--diagram-mix)" }}
       >
         <p className="panel flex items-center gap-3 rounded-full px-4 py-2">
           <span aria-hidden className="flex items-center gap-1.5">
             {sections.map((section, index) => (
               <span
-                key={section.id}
+                key={section.layer}
                 className={`block h-1 rounded-full transition-all duration-500 ${
                   index === reached
                     ? "w-6 bg-accent"
@@ -93,9 +92,9 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
 
       {sections.map((section) => (
         <section
-          key={section.id}
-          data-layer={section.id}
-          aria-labelledby={`${section.id}-title`}
+          key={section.layer}
+          data-layer={section.layer}
+          aria-labelledby={`${section.layer}-title`}
           className="relative z-10 flex min-h-[78svh] snap-start items-center pt-12 pb-28 sm:py-20 lg:min-h-svh"
         >
           <div className="mx-auto w-full max-w-6xl px-4 lg:pl-20">
@@ -108,7 +107,7 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
                 {section.eyebrow}
               </p>
               <h2
-                id={`${section.id}-title`}
+                id={`${section.layer}-title`}
                 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl"
               >
                 {section.title}
@@ -135,7 +134,7 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
                     >
                       <p className="font-medium text-text">{column.label}</p>
                       <p className="mt-0.5 font-mono text-[11px] tracking-[0.1em] text-accent">
-                        {column.sub}
+                        {column.technology}
                       </p>
                       <ul className="mt-4 space-y-2.5">
                         {column.points.map((point) => (
