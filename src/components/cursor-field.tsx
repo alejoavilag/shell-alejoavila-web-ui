@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 const INTERACTIVE = 'a, button, summary, [role="button"], [data-cursor="grow"]';
+const TEXT = "p, li, h1, h2, h3, h4, dd, dt, pre, code, figcaption";
+
+type Shape = "idle" | "interactive" | "text";
 const QUERIES = ["(pointer: fine)", "(prefers-reduced-motion: reduce)"];
 
 function subscribe(onChange: () => void) {
@@ -20,7 +23,7 @@ function isSupported() {
 export function CursorField() {
   const dot = useRef<HTMLDivElement>(null);
   const ring = useRef<HTMLDivElement>(null);
-  const [hovering, setHovering] = useState(false);
+  const [shape, setShape] = useState<Shape>("idle");
   const enabled = useSyncExternalStore(subscribe, isSupported, () => false);
 
   useEffect(() => {
@@ -37,7 +40,9 @@ export function CursorField() {
       target.x = event.clientX;
       target.y = event.clientY;
       const node = event.target as Element | null;
-      setHovering(Boolean(node?.closest?.(INTERACTIVE)));
+      if (node?.closest?.(INTERACTIVE)) setShape("interactive");
+      else if (node?.closest?.(TEXT)) setShape("text");
+      else setShape("idle");
     };
 
     const tick = () => {
@@ -75,21 +80,30 @@ export function CursorField() {
     <div aria-hidden className="cursor-tint pointer-events-none fixed inset-0 z-50">
       <div
         ref={ring}
-        className="cursor-ring absolute top-0 left-0 rounded-full border-2"
+        className="cursor-ring absolute top-0 left-0"
         style={{
-          width: hovering ? 54 : 34,
-          height: hovering ? 54 : 34,
-          borderColor: "var(--tint)",
-          backgroundColor: `color-mix(in srgb, var(--tint) ${hovering ? 22 : 10}%, transparent)`,
-          boxShadow: "0 0 22px color-mix(in srgb, var(--tint) 35%, transparent)",
+          width: shape === "interactive" ? 42 : shape === "text" ? 2 : 24,
+          height: shape === "text" ? 26 : shape === "interactive" ? 42 : 24,
+          borderRadius: shape === "text" ? 1 : 999,
+          border: shape === "text" ? "0" : "1.5px solid var(--tint)",
+          backgroundColor:
+            shape === "text"
+              ? "var(--tint)"
+              : shape === "interactive"
+                ? "color-mix(in srgb, var(--tint) 16%, transparent)"
+                : "transparent",
+          boxShadow: "0 0 10px color-mix(in srgb, var(--tint) 30%, transparent)",
         }}
       />
       <div
         ref={dot}
-        className="absolute top-0 left-0 size-2.5 rounded-full"
+        className="absolute top-0 left-0 rounded-full"
         style={{
+          width: shape === "text" ? 0 : 7,
+          height: shape === "text" ? 0 : 7,
           backgroundColor: "var(--tint)",
-          boxShadow: "0 0 16px var(--tint)",
+          boxShadow: "0 0 10px var(--tint)",
+          transition: "width 0.18s ease, height 0.18s ease",
         }}
       />
     </div>

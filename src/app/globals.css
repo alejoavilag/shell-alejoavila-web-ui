@@ -247,10 +247,11 @@ body {
 
 .cursor-ring {
   transition:
-    width 0.22s ease,
-    height 0.22s ease,
-    background-color 0.22s ease,
-    border-color 0.22s ease;
+    width 0.18s ease,
+    height 0.18s ease,
+    border-radius 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease;
 }
 
 @keyframes packet {
