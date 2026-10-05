@@ -65,6 +65,7 @@ export type CaseStudy = {
   title: string;
   lead: string;
   records: BuildRecord[];
+  note: { title: string; body: string };
   repositories: Link[];
 };
 
