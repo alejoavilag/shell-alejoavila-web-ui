@@ -1,13 +1,13 @@
 import { getArchitectureModel } from "@/application/use-cases/get-architecture-model";
 import { getLandingContent } from "@/application/use-cases/get-landing-content";
 import { LayeredStory } from "@/components/layered-story";
+import { RuntimeWidget } from "@/components/runtime-widget";
 import { ScrollSpine } from "@/components/scroll-spine";
 import { architectureRepository, landingContentRepository } from "@/infrastructure/container";
 
 export default function Home() {
-  const { hero, profile, expertise, layers, caseStudy, contact } = getLandingContent(
-    landingContentRepository,
-  );
+  const { hero, profile, expertise, layers, caseStudy, runtime, contact } =
+    getLandingContent(landingContentRepository);
   const model = getArchitectureModel(architectureRepository);
 
   return (
@@ -192,6 +192,32 @@ export default function Home() {
             </a>
           ))}
         </div>
+      </section>
+
+      <section
+        id="runtime"
+        aria-labelledby="runtime-title"
+        className="panel-pass relative z-10 mx-auto flex min-h-svh max-w-6xl snap-start flex-col justify-center px-4 py-20 lg:pl-20"
+      >
+        <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+          <span aria-hidden className="h-px w-8 bg-accent" />
+          {runtime.eyebrow}
+        </p>
+        <h2
+          id="runtime-title"
+          className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl"
+        >
+          {runtime.title}
+        </h2>
+        <p className="mt-5 max-w-prose text-lg leading-relaxed text-text-muted">
+          {runtime.lead}
+        </p>
+
+        <RuntimeWidget />
+
+        <p className="mt-8 max-w-prose text-sm leading-relaxed text-text-muted">
+          {runtime.closing}
+        </p>
       </section>
 
       <footer

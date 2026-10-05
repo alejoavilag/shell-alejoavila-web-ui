@@ -210,6 +210,19 @@ const CONTENT: LandingContent = {
     ],
   },
 
+  runtime: {
+    eyebrow: "Composición en runtime",
+    title: "El microfrontend, en vivo",
+    lead:
+      "El chat de abajo no viene en el bundle de esta página. Es un Web Component " +
+      "construido en Angular, desplegado desde otro repositorio a otro sitio, que este " +
+      "shell en React descarga y verifica mientras lo estás leyendo.",
+    closing:
+      "Los datos del panel se leen del manifest real, no están escritos a mano. Si el " +
+      "bundle no coincidiera con su hash, el navegador se negaría a ejecutarlo y esta " +
+      "página seguiría funcionando igual.",
+  },
+
   contact: {
     eyebrow: "Contacto",
     title: "Hablemos",
