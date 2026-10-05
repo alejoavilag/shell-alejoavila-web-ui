@@ -1,122 +1,229 @@
-import { LayeredStory, type Section } from "@/components/layered-story";
-
-const SECTIONS: Section[] = [
-  {
-    id: "edge",
-    eyebrow: "Capa de borde",
-    title: "Todo empieza en el CDN",
-    lead: "El contenido se sirve pre-renderizado desde una red de distribución global, sin servidor que mantener y con certificado gestionado.",
-    points: [
-      "HTML estático distribuido en el borde, con caché agresiva para los recursos versionados",
-      "Cabeceras de seguridad aplicadas en el origen: HSTS, nosniff, control de marcos y política de contenido",
-      "Funciones en el borde para manipular peticiones y respuestas antes de que lleguen al origen",
-    ],
-  },
-  {
-    id: "frontend",
-    eyebrow: "Capa de frontend",
-    title: "Microfrontends que se componen en runtime",
-    lead: "Trabajo frontend a escala con arquitectura de microfrontends: aplicaciones desplegables de forma independiente que se ensamblan en el navegador.",
-    points: [
-      "Angular con Module Federation para despliegues independientes por equipo",
-      "Web Components con Stencil, consumibles desde cualquier shell sin importar su stack",
-      "Librerías de UI compartidas y versionadas entre varios productos",
-      "React y Next.js en proyectos propios, incluido este sitio",
-    ],
-  },
-  {
-    id: "backend",
-    eyebrow: "Capa de backend",
-    title: "Servicios con el dominio aislado",
-    lead: "Construyo microservicios en NestJS y TypeScript sobre arquitectura hexagonal, documentados con OpenAPI y cubiertos con pruebas.",
-    points: [
-      "Puertos y adaptadores que mantienen el núcleo de negocio testeable y portable",
-      "APIs públicas y privadas con contratos OpenAPI como fuente de verdad",
-      "Arquitectura dirigida por eventos para procesos asíncronos",
-      "Escalado a cero: el servicio no consume nada mientras nadie lo llama",
-    ],
-  },
-  {
-    id: "data",
-    eyebrow: "Capa de datos",
-    title: "Modelado por patrón de acceso",
-    lead: "Trabajo datos sobre bases NoSQL y relacionales, diseñando el modelo a partir de cómo se consulta y no al revés.",
-    points: [
-      "DynamoDB con diseño de claves orientado a los patrones de acceso reales",
-      "Bases relacionales para lo que exige consistencia e integridad referencial",
-      "Procesamiento batch en Spark para transformación de datos",
-    ],
-  },
-  {
-    id: "infra",
-    eyebrow: "Infraestructura",
-    title: "Nada se crea a mano",
-    lead: "Gestiono infraestructura como código en Terraform, con módulos reutilizables, estado remoto y separación por ambiente.",
-    points: [
-      "Despliegue continuo autenticado por identidad federada, sin llaves de larga vida",
-      "Separación entre la capa que puede otorgar permisos y la que automatiza CI",
-      "Compuertas de calidad y seguridad obligatorias en cada integración",
-      "Rotación de secretos y monitoreo proactivo como parte de la operación",
-    ],
-  },
-];
+import { getArchitectureModel } from "@/application/use-cases/get-architecture-model";
+import { getLandingContent } from "@/application/use-cases/get-landing-content";
+import { LayeredStory } from "@/components/layered-story";
+import { ScrollSpine } from "@/components/scroll-spine";
+import { architectureRepository, landingContentRepository } from "@/infrastructure/container";
 
 export default function Home() {
-  const hero = (
-    <header className="relative">
-      <div className="relative flex min-h-[78vh] flex-col justify-center py-20">
-          <p className="inline-flex w-fit items-center gap-2 rounded-full border border-border-strong px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
-            <span className="pulse-ring size-1.5 rounded-full bg-accent shadow-[0_0_8px_var(--glow)]" />
-            Bogotá · Abierto a trabajo remoto
-          </p>
-          <h1 className="glow-text mt-7 text-5xl font-semibold tracking-tight sm:text-7xl">
-            Alejandro Ávila
-          </h1>
-          <p className="mt-4 font-mono text-lg tracking-tight text-accent sm:text-xl">
-            Senior Full-Stack Engineer · Platform &amp; Cloud
-          </p>
-          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-text-muted">
-            Construyo plataformas de banca digital de punta a punta: microfrontends,
-            microservicios e infraestructura como código.
-          </p>
-          <ul className="mt-10 flex flex-wrap gap-2">
-            {["TypeScript", "NestJS", "Angular", "React", "Terraform", "AWS", "GCP"].map(
-              (tech) => (
+  const { hero, profile, expertise, layers, caseStudy, contact } = getLandingContent(
+    landingContentRepository,
+  );
+  const model = getArchitectureModel(architectureRepository);
+
+  return (
+    <main className="relative">
+      <div className="zone-light relative">
+        <header className="relative z-10 mx-auto max-w-6xl snap-start px-4 lg:pl-20">
+          <div className="hero-dissolve relative flex h-svh flex-col justify-center">
+            <p className="inline-flex w-fit items-center gap-2 rounded-full border border-border-strong px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+              <span className="pulse-ring size-1.5 rounded-full bg-accent" />
+              {hero.badge}
+            </p>
+            <h1 className="mt-7 text-5xl font-semibold tracking-tight sm:text-7xl">
+              {hero.name}
+            </h1>
+            <p className="mt-4 font-mono text-lg tracking-tight text-accent sm:text-xl">
+              {hero.role}
+            </p>
+            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-text-muted">
+              {hero.lead}
+            </p>
+            <ul className="mt-10 flex flex-wrap gap-2">
+              {hero.stack.map((tech) => (
                 <li
                   key={tech}
-                  className="rounded-md border border-border bg-surface/60 px-3 py-1 font-mono text-xs text-text-muted"
+                  className="rounded-md border border-border bg-surface px-3 py-1 font-mono text-xs text-text-muted"
                 >
                   {tech}
                 </li>
-              ),
-            )}
-          </ul>
-          <div className="mt-12 flex flex-wrap gap-4">
-            <a
-              href="#edge-title"
-              className="rounded-lg bg-accent px-5 py-3 font-medium text-[#04060c] shadow-[0_0_28px_var(--glow)] transition-shadow hover:shadow-[0_0_44px_var(--glow)]"
+              ))}
+            </ul>
+            <div className="mt-12 flex flex-wrap gap-4">
+              <a
+                href={hero.primary.href}
+                className="rounded-lg bg-accent px-5 py-3 font-medium text-accent-contrast shadow-[0_8px_30px_var(--glow)] transition-shadow hover:shadow-[0_12px_44px_var(--glow)]"
+              >
+                {hero.primary.label}
+              </a>
+              <a
+                href={hero.secondary.href}
+                className="rounded-lg border border-border-strong px-5 py-3 font-medium transition-colors hover:border-accent hover:text-accent"
+              >
+                {hero.secondary.label}
+              </a>
+            </div>
+          </div>
+        </header>
+
+        <section
+          id="perfil"
+          aria-labelledby="perfil-title"
+          className="panel-pass relative z-10 mx-auto flex min-h-svh max-w-6xl snap-start flex-col justify-center px-4 py-20 lg:pl-20"
+        >
+          <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+            <span aria-hidden className="h-px w-8 bg-accent" />
+            {profile.eyebrow}
+          </p>
+          <h2
+            id="perfil-title"
+            className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl"
+          >
+            {profile.title}
+          </h2>
+          <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+            <div className="max-w-prose space-y-6 text-lg leading-relaxed text-text-muted">
+              {profile.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              <p className="text-text">{profile.closing}</p>
+            </div>
+            <dl className="h-fit divide-y divide-border rounded-2xl border border-border bg-surface">
+              {profile.facts.map((fact) => (
+                <div key={fact.label} className="px-5 py-4">
+                  <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+                    {fact.label}
+                  </dt>
+                  <dd className="mt-1.5 leading-relaxed text-text-muted">{fact.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        <section
+          id="dominio"
+          aria-labelledby="dominio-title"
+          className="panel-pass relative z-10 mx-auto flex min-h-svh max-w-6xl snap-start flex-col justify-center border-t border-border px-4 py-20 lg:pl-20"
+        >
+          <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+            <span aria-hidden className="h-px w-8 bg-accent" />
+            {expertise.eyebrow}
+          </p>
+          <h2
+            id="dominio-title"
+            className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl"
+          >
+            {expertise.title}
+          </h2>
+          <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            <div className="max-w-prose space-y-6 text-lg leading-relaxed text-text-muted">
+              {expertise.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              <p className="text-text">{expertise.closing}</p>
+            </div>
+            <ul className="h-fit space-y-2.5 rounded-2xl border border-border bg-surface p-6">
+              <li className="pb-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+                {expertise.flowsLabel}
+              </li>
+              {expertise.flows.map((flow) => (
+                <li key={flow} className="flex gap-3 text-text-muted">
+                  <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
+                  <span className="leading-relaxed">{flow}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <section id="stack" className="relative">
+        <ScrollSpine />
+        <LayeredStory sections={layers} model={model} />
+      </section>
+
+      <section
+        id="caso"
+        aria-labelledby="caso-title"
+        className="panel-pass relative z-10 mx-auto flex min-h-svh max-w-6xl snap-start flex-col justify-center px-4 py-20 lg:pl-20"
+      >
+        <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+          <span aria-hidden className="h-px w-8 bg-accent" />
+          {caseStudy.eyebrow}
+        </p>
+        <h2
+          id="caso-title"
+          className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl"
+        >
+          {caseStudy.title}
+        </h2>
+        <p className="mt-5 max-w-prose text-lg leading-relaxed text-text-muted">
+          {caseStudy.lead}
+        </p>
+
+        <dl className="mt-10 divide-y divide-border overflow-hidden rounded-2xl border border-border">
+          {caseStudy.records.map((record) => (
+            <div
+              key={record.label}
+              className="flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-center sm:gap-6"
             >
-              Recorrer la arquitectura
-            </a>
+              <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent sm:w-52 sm:shrink-0">
+                {record.label}
+              </dt>
+              <dd className="flex-1 leading-relaxed text-text-muted">{record.detail}</dd>
+              <dd
+                className={`font-mono text-[11px] tracking-[0.1em] ${
+                  record.status === "live" ? "text-accent" : "text-text-muted"
+                }`}
+              >
+                {record.status === "live" ? "en línea" : "en construcción"}
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <div className="mt-10 flex flex-wrap gap-4">
+          {caseStudy.repositories.map((repo) => (
             <a
-              href="https://github.com/alejoavilag"
+              key={repo.href}
+              href={repo.href}
+              className="rounded-lg border border-border-strong px-5 py-3 font-mono text-sm transition-colors hover:border-accent hover:text-accent"
+            >
+              {repo.label}
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <footer
+        id="contacto"
+        aria-labelledby="contacto-title"
+        className="relative z-10 mx-auto flex min-h-svh max-w-6xl snap-end flex-col justify-center px-4 py-20 lg:pl-20"
+      >
+        <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+          <span aria-hidden className="h-px w-8 bg-accent" />
+          {contact.eyebrow}
+        </p>
+        <h2
+          id="contacto-title"
+          className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl"
+        >
+          {contact.title}
+        </h2>
+        <p className="mt-5 max-w-prose text-lg leading-relaxed text-text-muted">
+          {contact.lead}
+        </p>
+        <div className="mt-10 flex flex-wrap gap-4">
+          {contact.channels.map((channel) => (
+            <a
+              key={channel.href}
+              href={channel.href}
               className="rounded-lg border border-border-strong px-5 py-3 font-medium transition-colors hover:border-accent hover:text-accent"
             >
-              GitHub
+              {channel.label}
             </a>
+          ))}
         </div>
-      </div>
-    </header>
-  );
-
-  return (
-    <main>
-      <LayeredStory sections={SECTIONS} hero={hero} />
-
-      <footer className="mx-auto max-w-6xl border-t border-border px-4 py-12">
-        <p className="font-mono text-xs text-text-muted">
-          Este sitio corre en Google Cloud dentro de la capa gratuita, desplegado con
-          Terraform desde GitHub Actions sin llaves de larga vida.
+        <p className="mt-20 flex items-center gap-2.5 font-mono text-xs text-text-muted">
+          <svg
+            aria-hidden
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="size-4 shrink-0 text-accent"
+          >
+            <path d="M12 21s-7.5-4.7-9.4-9A5.4 5.4 0 0 1 12 6.2a5.4 5.4 0 0 1 9.4 5.8C19.5 16.3 12 21 12 21Z" />
+          </svg>
+          {contact.credit}
         </p>
       </footer>
     </main>

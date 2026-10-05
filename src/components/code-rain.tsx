@@ -34,9 +34,9 @@ function buildColumns() {
       id: i,
       glyphs: `${lines}\n${lines}`,
       left: (i / COLUMNS) * 100 + random() * 2,
-      duration: 40 + random() * 60,
+      duration: 45 + random() * 65,
       delay: -random() * 50,
-      opacity: 0.1 + random() * 0.12,
+      opacity: 0.07 + random() * 0.08,
     };
   });
 }
@@ -47,10 +47,10 @@ export function CodeRain() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 -z-[1] overflow-hidden"
+      className="pointer-events-none absolute inset-0 overflow-hidden"
       style={{
         maskImage:
-          "radial-gradient(ellipse 48% 55% at 38% 42%, transparent 10%, #000 85%)",
+          "radial-gradient(ellipse 64% 62% at 50% 45%, transparent 8%, #000 88%)",
       }}
     >
       {COLUMN_DATA.map((column) => (

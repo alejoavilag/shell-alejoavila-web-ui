@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { CodeRain } from "@/components/code-rain";
+import { CursorField } from "@/components/cursor-field";
+import { SiteBackdrop } from "@/components/site-backdrop";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -44,6 +45,7 @@ const personSchema = {
   givenName: "Alejandro",
   familyName: "Ávila Guerrero",
   url: SITE_URL,
+  email: "alejandroavilaguerrero@gmail.com",
   jobTitle: "Senior Full-Stack Engineer",
   description: DESCRIPTION,
   address: {
@@ -97,7 +99,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <CodeRain />
+        <SiteBackdrop />
+        <CursorField />
         {children}
         <script
           type="application/ld+json"
