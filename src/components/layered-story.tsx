@@ -96,7 +96,7 @@ export function LayeredStory({ sections }: { sections: Section[] }) {
           key={section.id}
           data-layer={section.id}
           aria-labelledby={`${section.id}-title`}
-          className="relative z-10 flex min-h-svh snap-start items-center pt-12 pb-28 sm:py-20"
+          className="relative z-10 flex min-h-[78svh] snap-start items-center pt-12 pb-28 sm:py-20 lg:min-h-svh"
         >
           <div className="mx-auto w-full max-w-6xl px-4 lg:pl-20">
             <article

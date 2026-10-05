@@ -78,7 +78,10 @@ const SECTIONS: Section[] = [
 
 const STACK = ["TypeScript", "NestJS", "Angular", "React", "Terraform", "AWS", "GCP"];
 
+const EMAIL = "alejandroavilaguerrero@gmail.com";
+
 const LINKS = [
+  { href: `mailto:${EMAIL}`, label: EMAIL },
   { href: "https://github.com/alejoavilag", label: "GitHub" },
   { href: "https://co.linkedin.com/in/alejoavilag", label: "LinkedIn" },
 ];
@@ -222,9 +225,16 @@ export default function Home() {
             </a>
           ))}
         </div>
-        <p className="mt-20 max-w-prose font-mono text-xs leading-relaxed text-text-muted">
-          Este sitio corre en Google Cloud dentro de la capa gratuita, desplegado con
-          Terraform desde GitHub Actions sin llaves de larga vida.
+        <p className="mt-20 flex items-center gap-2.5 font-mono text-xs text-text-muted">
+          <svg
+            aria-hidden
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="size-4 shrink-0 text-accent"
+          >
+            <path d="M12 21s-7.5-4.7-9.4-9A5.4 5.4 0 0 1 12 6.2a5.4 5.4 0 0 1 9.4 5.8C19.5 16.3 12 21 12 21Z" />
+          </svg>
+          Diseñado a cuatro manos por Alejandro Ávila y Claude
         </p>
       </footer>
     </main>

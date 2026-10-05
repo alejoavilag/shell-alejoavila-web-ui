@@ -45,6 +45,7 @@ const personSchema = {
   givenName: "Alejandro",
   familyName: "Ávila Guerrero",
   url: SITE_URL,
+  email: "alejandroavilaguerrero@gmail.com",
   jobTitle: "Senior Full-Stack Engineer",
   description: DESCRIPTION,
   address: {
