@@ -189,6 +189,15 @@ const CONTENT: LandingContent = {
         status: "building",
       },
     ],
+    note: {
+      title: "La arquitectura hexagonal también está aquí",
+      body:
+        "No es solo una viñeta de la capa de backend. Este frontend está partido en " +
+        "dominio, aplicación e infraestructura: el dominio no importa React, la página " +
+        "depende de un puerto y no del archivo que carga el contenido, y una regla de " +
+        "linter rompe la compilación si un import apunta hacia adentro. El día que el " +
+        "contenido venga del API, cambia una línea del contenedor y nada más se mueve.",
+    },
     repositories: [
       {
         href: "https://github.com/alejoavilag/shell-alejoavila-web-ui",

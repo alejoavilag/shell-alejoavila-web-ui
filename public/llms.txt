@@ -1,0 +1,17 @@
+# Alejandro Ávila
+
+> Senior Full-Stack Engineer · Platform & Cloud. Ingeniero mecatrónico
+> especializado en plataformas de banca digital: microfrontends, microservicios
+> en NestJS e infraestructura como código en Terraform. Bogotá, Colombia.
+> Abierto a trabajo remoto.
+
+## Páginas
+
+- [Perfil](https://alejoavila.web.app/): recorrido por las capas de su stack,
+  su dominio en banca digital y cómo está construido este sitio.
+
+## Contacto
+
+- Correo: alejandroavilaguerrero@gmail.com
+- GitHub: https://github.com/alejoavilag
+- LinkedIn: https://co.linkedin.com/in/alejoavilag

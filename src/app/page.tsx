@@ -172,6 +172,15 @@ export default function Home() {
           ))}
         </dl>
 
+        <div className="mt-8 rounded-2xl border border-border border-l-2 border-l-accent bg-surface/50 p-6">
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+            {caseStudy.note.title}
+          </p>
+          <p className="mt-3 max-w-prose leading-relaxed text-text-muted">
+            {caseStudy.note.body}
+          </p>
+        </div>
+
         <div className="mt-10 flex flex-wrap gap-4">
           {caseStudy.repositories.map((repo) => (
             <a
