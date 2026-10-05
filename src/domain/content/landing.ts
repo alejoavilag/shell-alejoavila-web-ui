@@ -69,6 +69,13 @@ export type CaseStudy = {
   repositories: Link[];
 };
 
+export type Runtime = {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  closing: string;
+};
+
 export type Contact = {
   eyebrow: string;
   title: string;
@@ -83,6 +90,7 @@ export type LandingContent = {
   expertise: Expertise;
   layers: LayerSection[];
   caseStudy: CaseStudy;
+  runtime: Runtime;
   contact: Contact;
 };
 
