@@ -78,7 +78,29 @@ const SECTIONS: Section[] = [
 
 const STACK = ["TypeScript", "NestJS", "Angular", "React", "Terraform", "AWS", "GCP"];
 
+const FLOWS = [
+  "Firma electrónica",
+  "Segundo factor de autenticación",
+  "Validación de identidad",
+  "Evaluación de riesgo",
+  "Renovación y reclasificación de productos de crédito",
+];
+
+const BUILD = [
+  { label: "Costo mensual", value: "0 USD, dentro de la capa gratuita", state: "live" },
+  { label: "Frontend", value: "Next.js, export estático en Firebase Hosting", state: "live" },
+  { label: "Infraestructura", value: "Terraform, dos capas con permisos separados", state: "live" },
+  { label: "Autenticación de CI", value: "Workload Identity Federation, sin llaves JSON", state: "live" },
+  { label: "Widget", value: "Angular Elements, desplegado y versionado aparte", state: "wip" },
+  { label: "Backend", value: "NestJS en Cloud Run, escala a cero", state: "wip" },
+];
+
 const EMAIL = "alejandroavilaguerrero@gmail.com";
+
+const REPOS = [
+  { href: "https://github.com/alejoavilag/shell-alejoavila-web-ui", label: "shell-alejoavila-web-ui" },
+  { href: "https://github.com/alejoavilag/alejoavila-gcp-iac", label: "alejoavila-gcp-iac" },
+];
 
 const LINKS = [
   { href: `mailto:${EMAIL}`, label: EMAIL },
@@ -189,11 +211,108 @@ export default function Home() {
             </dl>
           </div>
         </section>
+
+        <section
+          id="dominio"
+          aria-labelledby="dominio-title"
+          className="panel-pass relative z-10 mx-auto flex min-h-svh max-w-6xl snap-start flex-col justify-center border-t border-border px-4 py-20 lg:pl-20"
+        >
+          <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+            <span aria-hidden className="h-px w-8 bg-accent" />
+            Dominio
+          </p>
+          <h2
+            id="dominio-title"
+            className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl"
+          >
+            Banca digital, donde un error no es un bug de interfaz
+          </h2>
+          <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            <div className="max-w-prose space-y-6 text-lg leading-relaxed text-text-muted">
+              <p>
+                Mi dominio es la banca digital, específicamente la originación y el
+                desembolso de crédito empresarial. Son sistemas donde una falla no se
+                queda en la pantalla: tiene consecuencias regulatorias y financieras.
+              </p>
+              <p className="text-text">
+                Trabajar en un entorno regulado cambia cómo construyes. La trazabilidad,
+                el permiso mínimo y la revisión de seguridad no son etapas al final del
+                proyecto: son condiciones de entrada.
+              </p>
+            </div>
+            <ul className="h-fit space-y-2.5 rounded-2xl border border-border bg-surface p-6">
+              <li className="pb-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+                Flujos que he construido
+              </li>
+              {FLOWS.map((flow) => (
+                <li key={flow} className="flex gap-3 text-text-muted">
+                  <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
+                  <span className="leading-relaxed">{flow}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
       </div>
 
       <section id="stack" className="relative">
         <ScrollSpine />
         <LayeredStory sections={SECTIONS} />
+      </section>
+
+      <section
+        id="caso"
+        aria-labelledby="caso-title"
+        className="panel-pass relative z-10 mx-auto flex min-h-svh max-w-6xl snap-start flex-col justify-center px-4 py-20 lg:pl-20"
+      >
+        <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-accent">
+          <span aria-hidden className="h-px w-8 bg-accent" />
+          Caso de estudio
+        </p>
+        <h2
+          id="caso-title"
+          className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl"
+        >
+          Este sitio es el ejemplo
+        </h2>
+        <p className="mt-5 max-w-prose text-lg leading-relaxed text-text-muted">
+          Todo lo que acabas de leer está aplicado aquí mismo. El código es público y la
+          infraestructura se define en Terraform, así que cada línea de esta tabla se
+          puede verificar en los repositorios.
+        </p>
+
+        <dl className="mt-10 divide-y divide-border overflow-hidden rounded-2xl border border-border">
+          {BUILD.map((row) => (
+            <div
+              key={row.label}
+              className="flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-center sm:gap-6"
+            >
+              <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent sm:w-52 sm:shrink-0">
+                {row.label}
+              </dt>
+              <dd className="flex-1 leading-relaxed text-text-muted">{row.value}</dd>
+              <dd
+                className={`font-mono text-[11px] tracking-[0.1em] ${
+                  row.state === "live" ? "text-accent" : "text-text-muted"
+                }`}
+              >
+                {row.state === "live" ? "en línea" : "en construcción"}
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <div className="mt-10 flex flex-wrap gap-4">
+          {REPOS.map((repo) => (
+            <a
+              key={repo.href}
+              href={repo.href}
+              className="rounded-lg border border-border-strong px-5 py-3 font-mono text-sm transition-colors hover:border-accent hover:text-accent"
+            >
+              {repo.label}
+            </a>
+          ))}
+        </div>
       </section>
 
       <footer
@@ -234,7 +353,7 @@ export default function Home() {
           >
             <path d="M12 21s-7.5-4.7-9.4-9A5.4 5.4 0 0 1 12 6.2a5.4 5.4 0 0 1 9.4 5.8C19.5 16.3 12 21 12 21Z" />
           </svg>
-          Diseñado a cuatro manos por Alejandro Ávila y Claude
+          Diseñado por Alejandro Ávila, a cuatro manos con Claude
         </p>
       </footer>
     </main>
