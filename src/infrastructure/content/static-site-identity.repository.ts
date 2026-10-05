@@ -6,7 +6,7 @@ const DESCRIPTION =
   "digital: microfrontends, microservicios en NestJS e infraestructura como código en Terraform.";
 
 const IDENTITY: SiteIdentity = {
-  url: "https://alejoavila.web.app",
+  url: "https://alejoavila.com",
   name: "Alejandro Ávila",
   title: "Alejandro Ávila — Senior Full-Stack Engineer",
   titleTemplate: "%s — Alejandro Ávila",
