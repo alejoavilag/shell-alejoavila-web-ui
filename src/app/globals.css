@@ -20,9 +20,12 @@
   --glow: rgba(34, 211, 238, 0.45);
   --trace: rgba(110, 170, 235, 0.22);
 
-  --spine-start: #1d5fe0;
-  --spine-mid: #3b82f6;
+  --spine-start: #0e7490;
+  --spine-mid: #1298b4;
   --spine-end: #22d3ee;
+
+  --tint-light: #1d5fe0;
+  --tint-dark: #22d3ee;
   --spine-track: rgba(122, 142, 178, 0.4);
 
   --cursor-x: -50vw;
@@ -232,8 +235,8 @@ body {
 .cursor-tint {
   --tint: color-mix(
     in srgb,
-    var(--spine-end) calc(var(--dark-mix) * 100%),
-    var(--spine-start)
+    var(--tint-dark) calc(var(--dark-mix) * 100%),
+    var(--tint-light)
   );
 }
 
